@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css?family=Questrial&display=swap');
+
+
 body,html{
     font-family: 'Questrial', sans-serif;
     margin:0 auto;
@@ -14,6 +15,10 @@ body,html{
     width:30%;
     height: 100%;
 }
+table{
+    border-collapse: initial ;
+    caption-side: initial ;
+}
 .datepicker_table{
     justify-content:center;
     align-items:center;
@@ -21,12 +26,12 @@ body,html{
     padding:20px;
     border-radius:10px;
     width:70%;
-    height: 30%;
+    height: 40%;
     box-shadow:0px 40px 30px -20px rgba(0,0,0,0.3);
 }
 .datepicker_table td, th{
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius:50px;
 }
 .control:hover,
@@ -45,7 +50,7 @@ body,html{
 }
 .PostIt{
     margin-bottom: auto;
-    height:35%;
+    height:40%;
     border-radius:10px;
     width:70%;
     background-color: #FFFF99;
@@ -60,7 +65,8 @@ body,html{
 }
 .PostIt_title{
     width:100%;
-    height:10%;
+    height:30px;
     background-color: #f5f51d;
-    margin-bottom: 10px;
+    margin-bottom: 10x;
 }
+@import url('https://fonts.googleapis.com/css?family=Questrial&display=swap');
