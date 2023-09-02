@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import Datepicker from "./Datepicker";
-import TodoList from "./TodoList";
+import PostIt from "./PostIt";
 
 export default function Calender(){
     const [date, setDate] = useState('');
@@ -12,8 +12,10 @@ export default function Calender(){
                     <p className="calender_font">Calender</p>  
                 </div>
                 <Datepicker setDate={setDate}/>
-                <p className="calender_font">ToDoList</p>  
-                <TodoList/>
+                <div style={{width : '70%', display:'flex', flexDirection:'row'}}>
+                    <p className="calender_font">Post It</p>  
+                </div>
+                <PostIt/>
             </div>
             <div>
                 
