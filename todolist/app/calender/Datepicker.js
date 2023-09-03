@@ -8,8 +8,9 @@ export default function Datepicker(props){
     const today_year = (new Date()).getFullYear();
     const today_month = (new Date()).getMonth() + 1;
     const today_day = (new Date()).getDate();
-    const [current_year, setYear] = useState((new Date()).getFullYear())
-    const [current_month, setMonth] = useState((new Date()).getMonth() + 1)
+    const [current_year, setYear] = useState((new Date()).getFullYear());
+    const [current_month, setMonth] = useState((new Date()).getMonth() + 1);
+    const [current_day, setDay] = useState((new Date()).getDate());
     // let current_month = (new Date()).getMonth() + 1;
     
     const monthHandler = (diff) => {
@@ -81,14 +82,34 @@ export default function Datepicker(props){
                     {
                         tbody_Day.map((week_arr,j) => {
                             return (<tr key={j}>
-                                {week_arr.map((day,i) => {return (<td key={i}
+                                {week_arr.map((day, i) => {
+                                    let className = null;
+                                    if (day !== '') {
+                                        if (today_year === current_year && today_month === current_month && today_day === Number(day)) className = 'today';
+                                        else if (current_day === Number(day)) className = 'selectToday';
+                                        else  className = 'tbody_Day_td';
+                                    }else className = null;
+                                    return (<td key={i} onClick = {() => {setDay(Number(day))}} className = {className}> 
+                                        {day}
+                                    </td>)
+                                })}
+
+                            </tr>)
+                        })
+                    }
+                    {/* {
+                        tbody_Day.map((week_arr,j) => {
+                            return (<tr key={j}>
+                                {week_arr.map((day,i) => {return (<td key={i} 
+                                onClick = {() => {setDay(Number(day))}}
                                 className={day !== '' ? 
-                                today_year === current_year && today_month === current_month && today_day === Number(day) ? 'today'
-                                : 'tbody_Day_td':null}            
+                                today_year === current_year && today_month === current_month && today_day === Number(day) ? 
+                                'today' : current_day === Number(day) ? 
+                                'selectToday': 'tbody_Day_td':null}            
                                 >{day}</td>)})}
                             </tr>)
                         })
-                    }               
+                    }                */}
                 </tbody>
             </table>
     )
