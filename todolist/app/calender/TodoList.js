@@ -6,8 +6,11 @@ export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
     const divRefs = useRef([]);
     const [isdrag, setIsdrag] = useState(false);
+    const [isSizedrag, setIsSizedrag] = useState(false);
     const startX = useRef(0);
     const startY = useRef(0);
+    const startSizeX = useRef(0);
+    const startSizeY  = useRef(0);
     const timeList = () => {
         
         let arr = [];
@@ -36,13 +39,15 @@ export default function TodoList(props) {
     }
 
     const handleDivClick = (e) => {
-        if (isdrag) return
+        if (isdrag || isSizedrag) return
         let left = e.nativeEvent.offsetX + 'px';
         let top = e.target.scrollTop + e.nativeEvent.offsetY + 'px';
         if(e.target.tagName === 'HR') top = e.target.scrollTop + parseInt(e.target.style.top) + 'px';
         const newDiv = {
             left:  left,
-            top:  top
+            top:  top,
+            width: 200,
+            height:100
         };
         divRefs.current.push(React.createRef());
         setDivs([...divs, newDiv]);
@@ -50,8 +55,30 @@ export default function TodoList(props) {
     const handleDivsClick = (e) => {
         e.stopPropagation();
     }
+    const resizestart = (e) => {
+        setIsSizedrag(true);
+        startSizeX.current = e.nativeEvent.offsetX
+        startSizeY.current = e.nativeEvent.offsetY
+        e.stopPropagation();
+    }  
+    const resizeend = (e) => {
+        setIsSizedrag(false);
+        e.stopPropagation();
+    }
+    const resize = (e, index) => {
+        if (!isSizedrag) return;
 
+        const newDivs = [...divs];
+        newDivs[index] = {
+            left: newDivs[index].left,
+            top: newDivs[index].top,
+            width: newDivs[index].width,
+            height: parseInt(newDivs[index].height) -startSizeY.current+ e.nativeEvent.offsetY + "px",
+          };
+        setDivs(newDivs);
+    }
     const dragdivstart = (e) => {
+
         startX.current = e.nativeEvent.offsetX
         startY.current = e.nativeEvent.offsetY
         setIsdrag(true)
@@ -63,10 +90,11 @@ export default function TodoList(props) {
         const newDivs = [...divs];
         const divRef = divRefs.current[index];
 
-        console.log(parseInt(e.target.style.left));
         newDivs[index] = {
             left: parseInt(e.target.style.left) - startX.current+ e.nativeEvent.offsetX + "px",
             top: parseInt(e.target.style.top) - startY.current+ e.nativeEvent.offsetY + "px",
+            width: newDivs[index].width,
+            height: newDivs[index].height
           };
           setDivs(newDivs);
     }
@@ -91,16 +119,20 @@ export default function TodoList(props) {
                         onMouseUp={dragdivend}
                         ref={divRefs.current[index]}
                         style={{
+                            cursor:'pointer',
                             position: 'absolute',
                             left: div.left,
                             top: div.top,
-                            width: '200px',
-                            height: '100px',
-                            background: 'lightgreen',
-                            resize:'both',
-                            overflow: 'auto'
+                            width: div.width,
+                            height: div.height,
+                            backgroundColor: 'rgb(121, 134, 203)'
                         }}
-                    ></div>
+                    >   
+
+                    <div style={{cursor:'s-resize', position:'absolute',bottom: '0',width:'100%', height:'10px', backgroundColor:'rgb(121, 134, 203)', zIndex:'5'}}
+                        onMouseDown={resizestart} onMouseMove={(e) => resize(e, index)} onMouseUp={resizeend}></div>         
+                    </div>
+                    
                 ))}
             </div>
         </div>
