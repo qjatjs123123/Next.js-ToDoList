@@ -5,6 +5,9 @@ import React, { useRef, useState } from "react";
 export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
     const divRefs = useRef([]);
+    const [isdrag, setIsdrag] = useState(false);
+    const startX = useRef(0);
+    const startY = useRef(0);
     const timeList = () => {
         
         let arr = [];
@@ -33,12 +36,10 @@ export default function TodoList(props) {
     }
 
     const handleDivClick = (e) => {
-        console.log(e.nativeEvent.offsetX,e.nativeEvent.offsetY,e.target.tagName)
+        if (isdrag) return
         let left = e.nativeEvent.offsetX + 'px';
         let top = e.target.scrollTop + e.nativeEvent.offsetY + 'px';
         if(e.target.tagName === 'HR') top = e.target.scrollTop + parseInt(e.target.style.top) + 'px';
-        
-        console.log(top);
         const newDiv = {
             left:  left,
             top:  top
@@ -48,6 +49,29 @@ export default function TodoList(props) {
     }
     const handleDivsClick = (e) => {
         e.stopPropagation();
+    }
+
+    const dragdivstart = (e) => {
+        startX.current = e.nativeEvent.offsetX
+        startY.current = e.nativeEvent.offsetY
+        setIsdrag(true)
+    }  
+    
+    const dragdivmove = (e,index) =>{
+        if (!isdrag) return;
+
+        const newDivs = [...divs];
+        const divRef = divRefs.current[index];
+
+        console.log(parseInt(e.target.style.left));
+        newDivs[index] = {
+            left: parseInt(e.target.style.left) - startX.current+ e.nativeEvent.offsetX + "px",
+            top: parseInt(e.target.style.top) - startY.current+ e.nativeEvent.offsetY + "px",
+          };
+          setDivs(newDivs);
+    }
+    const dragdivend = (e) =>{
+        setIsdrag(false)
     }
     return (
         <div className="todolist" style={{display:"flex", flexDirection:'row'}}>
@@ -62,6 +86,9 @@ export default function TodoList(props) {
                     <div
                         key={index}
                         onClick={handleDivsClick}
+                        onMouseMove={(e) => dragdivmove(e, index)}
+                        onMouseDown={dragdivstart}
+                        onMouseUp={dragdivend}
                         ref={divRefs.current[index]}
                         style={{
                             position: 'absolute',
