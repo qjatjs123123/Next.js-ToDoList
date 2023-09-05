@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
@@ -9,8 +9,25 @@ export default function TodoList(props) {
     const [isSizedrag, setIsSizedrag] = useState(false);
     const startX = useRef(0);
     const startY = useRef(0);
-    const startSizeX = useRef(0);
+    const currentIndex = useRef(0);
     const startSizeY  = useRef(0);
+    const currentHeight = useRef(0);
+    const scrollTop = useRef(0);
+    const currentscrollTop = useRef(0);
+    useEffect(() => {
+        
+        const divlist = document.getElementsByClassName('todolist')[0];
+
+        function handleScroll() {
+            scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
+        }
+        divlist.addEventListener('scroll', handleScroll);
+
+        return () => {
+            divlist.removeEventListener('scroll', handleScroll);
+          };
+    },[])
+
     const timeList = () => {
         
         let arr = [];
@@ -55,26 +72,39 @@ export default function TodoList(props) {
     const handleDivsClick = (e) => {
         e.stopPropagation();
     }
-    const resizestart = (e) => {
+    const resizestart = (e, index) => {
+        console.log("resizestart");
         setIsSizedrag(true);
-        startSizeX.current = e.nativeEvent.offsetX
-        startSizeY.current = e.nativeEvent.offsetY
+        currentIndex.current = index;
+        startSizeY.current = e.clientY;
+        currentHeight.current = divs[currentIndex.current].height;
+        currentscrollTop.current = scrollTop.current;
         e.stopPropagation();
     }  
     const resizeend = (e) => {
         setIsSizedrag(false);
         e.stopPropagation();
     }
-    const resize = (e, index) => {
-        if (!isSizedrag) return;
-
+    const resize = (e) => {
         const newDivs = [...divs];
+        const index = currentIndex.current;
+        const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
+                     + parseInt(currentHeight.current) - startSizeY.current + e.clientY
+        if (parseInt(newDivs[index].top) + height <= 100 || parseInt(newDivs[index].top)  + height > 1650 ) return
+        console.log(newDivs[index].top + height)
         newDivs[index] = {
             left: newDivs[index].left,
             top: newDivs[index].top,
             width: newDivs[index].width,
-            height: parseInt(newDivs[index].height) -startSizeY.current+ e.nativeEvent.offsetY + "px",
-          };
+            height:height + "px",
+        };
+        console.log(currentHeight.current, startSizeY.current, e.clientY,scrollTop.current);
+        // newDivs[index] = {
+        //     left: newDivs[index].left,
+        //     top: newDivs[index].top,
+        //     width: newDivs[index].width,
+        //     height: parseInt(newDivs[index].height) -startSizeY.current+ e.nativeEvent.offsetY + "px",
+        //   };
         setDivs(newDivs);
     }
     const dragdivstart = (e) => {
@@ -99,10 +129,20 @@ export default function TodoList(props) {
           setDivs(newDivs);
     }
     const dragdivend = (e) =>{
-        setIsdrag(false)
+        setIsdrag(false);
+    }
+
+    const eventHandler = (e) => {
+        if (isSizedrag) resize(e);
+      
+    }
+
+    const eventend = () =>{
+        setIsdrag(false);
+        setIsSizedrag(false);
     }
     return (
-        <div className="todolist" style={{display:"flex", flexDirection:'row'}}>
+        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onMouseMove={(e)=>{eventHandler(e)}} onMouseUp={eventend}>
             <div className="timelist">
                 {timeList()}
             </div>
@@ -114,7 +154,7 @@ export default function TodoList(props) {
                     <div
                         key={index}
                         onClick={handleDivsClick}
-                        onMouseMove={(e) => dragdivmove(e, index)}
+                        className="a"
                         onMouseDown={dragdivstart}
                         onMouseUp={dragdivend}
                         ref={divRefs.current[index]}
@@ -129,8 +169,8 @@ export default function TodoList(props) {
                         }}
                     >   
 
-                    <div style={{cursor:'s-resize', position:'absolute',bottom: '0',width:'100%', height:'10px', backgroundColor:'rgb(121, 134, 203)', zIndex:'5'}}
-                        onMouseDown={resizestart} onMouseMove={(e) => resize(e, index)} onMouseUp={resizeend}></div>         
+                    <div style={{ className:"b",cursor:'s-resize', position:'absolute',bottom: '0',width:'100%', height:'10px', backgroundColor:'rgb(121, 134, 203)', zIndex:'5'}}
+                        onMouseDown={(e) => resizestart(e, index)}></div>         
                     </div>
                     
                 ))}
