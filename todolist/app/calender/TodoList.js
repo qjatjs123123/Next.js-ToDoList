@@ -1,12 +1,15 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from "react";
-
+let isSizedrag = false;
+let isdrag = false;
+let pointerMoveEventListener = null; // 변수 추가
 export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
     const divRefs = useRef([]);
-    const [isdrag, setIsdrag] = useState(false);
-    const [isSizedrag, setIsSizedrag] = useState(false);
+    //const [isdrag, setIsdrag] = useState(false);
+    //const [isSizedrag, setIsSizedrag] = useState(false);
+    
     const startX = useRef(0);
     const startY = useRef(0);
     const currentIndex = useRef(0);
@@ -16,10 +19,9 @@ export default function TodoList(props) {
     const currentscrollTop = useRef(0);
     const currentleft = useRef(0);
     const currenttop = useRef(0);
+    let divlist = '';
     useEffect(() => {
-        
-        const divlist = document.getElementsByClassName('todolist')[0];
-
+        divlist = document.getElementsByClassName('todolist')[0];
         function handleScroll() {
             scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
         }
@@ -29,7 +31,6 @@ export default function TodoList(props) {
             divlist.removeEventListener('scroll', handleScroll);
           };
     },[])
-
     const timeList = () => {
         
         let arr = [];
@@ -74,51 +75,63 @@ export default function TodoList(props) {
     const handleDivsClick = (e) => {
         e.stopPropagation();
     }
+
+    const eventstart = (e) => {
+        console.log('start');
+        
+        if (pointerMoveEventListener === null){
+            pointerMoveEventListener = pointermoveHandler;
+            document.getElementsByClassName('todolist')[0].addEventListener('pointermove', pointermoveHandler);
+        }
+        
+    }
+    const pointermoveHandler = (event) => {
+        const events = event.getCoalescedEvents();
+        for (let event of events) {
+            eventHandler(event);
+        }
+    }
     const resizestart = (e, index) => {
-        console.log("resizestart");
-        setIsSizedrag(true);
+        eventstart(e);
+        //setIsSizedrag(true);
+        isSizedrag = true
         currentIndex.current = index;
         startSizeY.current = e.clientY;
         currentHeight.current = divs[currentIndex.current].height;
         currentscrollTop.current = scrollTop.current;
         e.stopPropagation();
     }  
-    const resizeend = (e) => {
-        setIsSizedrag(false);
-        e.stopPropagation();
-    }
     const resize = (e) => {
+
         const newDivs = [...divs];
         const index = currentIndex.current;
         const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
                      + parseInt(currentHeight.current) - startSizeY.current + e.clientY
-        if ( height <= 100 || parseInt(newDivs[index].top)  + height > 1650 ) return
-        console.log(parseInt(newDivs[index].top) , height)
+        console.log("wqeqwe",newDivs)
+        if ( height < 100 || parseInt(newDivs[index].top)  + height > 1650 || height % 25 == 0) return
+
         newDivs[index] = {
             left: newDivs[index].left,
             top: newDivs[index].top,
             width: newDivs[index].width,
             height:height + "px",
         };
-        // newDivs[index] = {
-        //     left: newDivs[index].left,
-        //     top: newDivs[index].top,
-        //     width: newDivs[index].width,
-        //     height: parseInt(newDivs[index].height) -startSizeY.current+ e.nativeEvent.offsetY + "px",
-        //   };
         setDivs(newDivs);
     }
     const dragdivstart = (e,index) => {
+        isdrag = true;
+        
         currentIndex.current = index;
         startX.current = e.clientX
         startY.current = e.clientY
         currentleft.current = parseInt(e.target.style.left);
         currenttop.current = parseInt(e.target.style.top);
-        setIsdrag(true)
+        eventstart(e);
+        e.stopPropagation();
     }  
     
     const dragdivmove = (e) =>{
-        if (!isdrag) return;
+        
         const newDivs = [...divs];
         const index = currentIndex.current;
         const divRef = divRefs.current[index];
@@ -129,7 +142,6 @@ export default function TodoList(props) {
             width: newDivs[index].width,
             height: newDivs[index].height
           };
-          console.log(newDivs[index])
           setDivs(newDivs);
     }
     const dragdivend = (e) =>{
@@ -137,22 +149,27 @@ export default function TodoList(props) {
     }
 
     const eventHandler = (e) => {
+        
         if (isSizedrag) resize(e);
         if (isdrag) dragdivmove(e);
     }
 
     const eventend = () =>{
-        setIsdrag(false);
-        setIsSizedrag(false);
+        isdrag = false;
+       isSizedrag=false;
+       console.log('end');
+       document.getElementsByClassName('todolist')[0].removeEventListener('pointermove', pointerMoveEventListener);
+       pointerMoveEventListener=null;
+
     }
     return (
-        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onMouseMove={(e)=>{eventHandler(e)}} onMouseUp={eventend}>
+        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onPointerUp={eventend} >
             <div className="timelist">
                 {timeList()}
             </div>
             <div className="wall" onClick={handleDivsClick}></div>
             
-            <div className="divlist"  onClick={handleDivClick}>
+            <div className="divlist"  onMouseDown={handleDivClick}>
                 {hrDraw()}    
                 {divs.map((div, index) => (
                     <div
@@ -173,7 +190,7 @@ export default function TodoList(props) {
                     >   
 
                     <div style={{ className:"b",cursor:'s-resize', position:'absolute',bottom: '0',width:'100%', height:'10px', backgroundColor:'rgb(121, 134, 203)', zIndex:'5'}}
-                        onMouseDown={(e) => resizestart(e, index)}></div>         
+                        onMouseDown={(e) => resizestart(e, index)} ></div>         
                     </div>
                     
                 ))}
