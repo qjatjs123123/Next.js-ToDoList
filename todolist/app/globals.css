@@ -83,6 +83,17 @@ table{
     font-weight: bold;
     font-family: 'Questrial', sans-serif;
 }
+.DetailmodalBody{
+    background-color: white;
+    font-family: 'Questrial', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+}
+.DetailmodalTitle{
+    background-color:  white;
+    font-weight: bold;
+    font-family: 'Questrial', sans-serif;
+}
 .todoList_container{
     width:70%;
     height:90%;
