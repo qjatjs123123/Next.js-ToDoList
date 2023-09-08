@@ -36,8 +36,10 @@ export default function TodoList(props) {
         let arr = [];
         for (let i = 8; i < 25; i++) {
             let tmp = '';
-            if ( i <= 12) tmp = `오전 ${i}시`;
+            if ( i < 12) tmp = `오전 ${i}시`;
             else tmp = `오후 ${i-12}시`;
+            if (i == 12) tmp = `오후 12시`;
+            if (i == 24) tmp = `오전 0시`;
             const tp = (i-8)*100 + 50;
             arr.push(
                 <span style={{position:'absolute', top:`${tp-12}px`, textAlign:'right',width:'100%'}} key={i}>{tmp}</span>
@@ -69,7 +71,9 @@ export default function TodoList(props) {
             left:  left,
             top:  cnt*25,
             width: 200,
-            height:100
+            height:100,
+            start: getTime(cnt),
+            end: getTime(cnt+4)
         };
         divRefs.current.push(React.createRef());
         setDivs([...divs, newDiv]);
@@ -77,7 +81,21 @@ export default function TodoList(props) {
     const handleDivsClick = (e) => {
         e.stopPropagation();
     }
+    const getTime = (top) => {
+        let hour = parseInt((top + 2) / 4) + 7;
+        const minute = (top + 2) % 4; 
+        let tmp = '';
+        if ( hour < 12) tmp +="오전 ";
+        else tmp += "오후 ";
 
+        if ( hour <= 12) tmp += hour
+        else tmp += hour - 12;
+        
+        if (minute == 0) tmp+="시";
+        else tmp += ":" + 15*minute;
+        return tmp;
+        
+    }
     const eventstart = (e) => {
         console.log('start');
         
@@ -110,13 +128,15 @@ export default function TodoList(props) {
         const index = currentIndex.current;
         const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
                      + parseInt(currentHeight.current) - startSizeY.current + e.clientY
-        if ( height < 25 || parseInt(newDivs[index].top)  + height > 1650 || parseInt(height) % 25 !== 0) return
-        
+        if ( height <= 50 || parseInt(newDivs[index].top)  + height > 1650 || parseInt(height) % 25 !== 0) return
+        let cnt = Math.round( (parseInt(newDivs[index].top) + height) / 25 );
         newDivs[index] = {
             left: newDivs[index].left,
             top: newDivs[index].top,
             width: newDivs[index].width,
             height:height + "px",
+            start: newDivs[index].start,
+            end: getTime(cnt)
         };
         setDivs(newDivs);
     }
@@ -126,8 +146,13 @@ export default function TodoList(props) {
         currentIndex.current = index;
         startX.current = e.clientX
         startY.current = e.clientY
-        currentleft.current = parseInt(e.target.style.left);
-        currenttop.current = parseInt(e.target.style.top);
+        if (e.target.tagName === 'SPAN'){
+            currentleft.current = parseInt(e.target.parentElement.style.left);
+            currenttop.current = parseInt(e.target.parentElement.style.top);
+        }else{
+            currentleft.current = parseInt(e.target.style.left);
+            currenttop.current = parseInt(e.target.style.top);
+        }
         eventstart(e);
         e.stopPropagation();
         e.preventDefault();
@@ -138,13 +163,16 @@ export default function TodoList(props) {
         const newDivs = [...divs];
         const index = currentIndex.current;
         const divRef = divRefs.current[index];
-        let cnt = Math.round(parseInt(currenttop.current - startY.current+ e.clientY)/25)
+        let cnt = Math.round(parseInt(currenttop.current - startY.current+ e.clientY)/25);
         if (cnt < 2 || (currentleft.current - startX.current+ e.clientX) <15) return;
+        let endcnt = Math.round((cnt*25 + parseInt(newDivs[index].height)) /25)
         newDivs[index] = {
             left: currentleft.current - startX.current+ e.clientX + "px",
             top: cnt*25 + "px",
             width: newDivs[index].width,
-            height: newDivs[index].height
+            height: newDivs[index].height,
+            start:getTime(cnt),
+            end:getTime(endcnt)
           };
           setDivs(newDivs);
 
@@ -193,10 +221,14 @@ export default function TodoList(props) {
                             height: div.height,
                             backgroundColor: 'rgb(121, 134, 203)',
                             borderRadius:'10px',
-                            border: '1px solid white'
+                            border: '1px solid white',
+                            color:'white',
+                            display:'flex',
+                            flexDirection:"column"
                         }}
                     >   
-
+                    <span style={{marginLeft:'5px', fontSize:'13px', fontWeight:'bold'}}>(제목 없음)</span>
+                    <span style={{marginLeft:'5px', fontSize:'13px', fontWeight:'bold'}}>{div.start}~{div.end}</span>
                     <div style={{ 
                                     className:"b",
                                     cursor:'s-resize', 
@@ -204,10 +236,9 @@ export default function TodoList(props) {
                                     bottom: '0',
                                     width:'100%', 
                                     marginBottom:'1px',
-                                    height:'15px', 
+                                    height:'10px', 
                                     backgroundColor:'rgb(121, 134, 203)',
-                                    
-                                    borderRadius:'50px'                          
+                                    borderRadius:'50px'                         
                                 }}
                         onMouseDown={(e) => resizestart(e, index)} onMouseUp={eventend}></div>         
                     </div>
