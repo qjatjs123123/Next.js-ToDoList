@@ -60,12 +60,14 @@ export default function TodoList(props) {
 
     const handleDivClick = (e) => {
         if (isdrag || isSizedrag) return
-        let left = e.nativeEvent.offsetX + 'px';
-        let top = e.target.scrollTop + e.nativeEvent.offsetY + 'px';
+        let left = e.nativeEvent.offsetX + 'px';  
+        let cnt = Math.round((e.target.scrollTop + e.nativeEvent.offsetY) / 25 );
+        let top = cnt*25 +'px';
+        if (cnt < 2) return;
         if(e.target.tagName === 'HR') top = e.target.scrollTop + parseInt(e.target.style.top) + 'px';
         const newDiv = {
             left:  left,
-            top:  top,
+            top:  cnt*25,
             width: 200,
             height:100
         };
@@ -100,6 +102,7 @@ export default function TodoList(props) {
         currentHeight.current = divs[currentIndex.current].height;
         currentscrollTop.current = scrollTop.current;
         e.stopPropagation();
+        e.preventDefault();
     }  
     const resize = (e) => {
 
@@ -107,9 +110,8 @@ export default function TodoList(props) {
         const index = currentIndex.current;
         const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
                      + parseInt(currentHeight.current) - startSizeY.current + e.clientY
-        console.log("wqeqwe",newDivs)
-        if ( height < 100 || parseInt(newDivs[index].top)  + height > 1650 || height % 25 == 0) return
-
+        if ( height < 25 || parseInt(newDivs[index].top)  + height > 1650 || parseInt(height) % 25 !== 0) return
+        
         newDivs[index] = {
             left: newDivs[index].left,
             top: newDivs[index].top,
@@ -128,6 +130,7 @@ export default function TodoList(props) {
         currenttop.current = parseInt(e.target.style.top);
         eventstart(e);
         e.stopPropagation();
+        e.preventDefault();
     }  
     
     const dragdivmove = (e) =>{
@@ -135,14 +138,16 @@ export default function TodoList(props) {
         const newDivs = [...divs];
         const index = currentIndex.current;
         const divRef = divRefs.current[index];
-
+        let cnt = Math.round(parseInt(currenttop.current - startY.current+ e.clientY)/25)
+        if (cnt < 2 || (currentleft.current - startX.current+ e.clientX) <15) return;
         newDivs[index] = {
             left: currentleft.current - startX.current+ e.clientX + "px",
-            top: currenttop.current - startY.current+ e.clientY + "px",
+            top: cnt*25 + "px",
             width: newDivs[index].width,
             height: newDivs[index].height
           };
           setDivs(newDivs);
+
     }
     const dragdivend = (e) =>{
         setIsdrag(false);
@@ -163,7 +168,7 @@ export default function TodoList(props) {
 
     }
     return (
-        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onPointerUp={eventend} >
+        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onMouseUp={eventend} >
             <div className="timelist">
                 {timeList()}
             </div>
@@ -177,6 +182,7 @@ export default function TodoList(props) {
                         onClick={handleDivsClick}
                         className="a"
                         onMouseDown={(e) => dragdivstart(e, index)}
+                        onMouseUp={eventend}
                         ref={divRefs.current[index]}
                         style={{
                             cursor:'pointer',
@@ -185,12 +191,25 @@ export default function TodoList(props) {
                             top: div.top,
                             width: div.width,
                             height: div.height,
-                            backgroundColor: 'rgb(121, 134, 203)'
+                            backgroundColor: 'rgb(121, 134, 203)',
+                            borderRadius:'10px',
+                            border: '1px solid white'
                         }}
                     >   
 
-                    <div style={{ className:"b",cursor:'s-resize', position:'absolute',bottom: '0',width:'100%', height:'10px', backgroundColor:'rgb(121, 134, 203)', zIndex:'5'}}
-                        onMouseDown={(e) => resizestart(e, index)} ></div>         
+                    <div style={{ 
+                                    className:"b",
+                                    cursor:'s-resize', 
+                                    position:'absolute',
+                                    bottom: '0',
+                                    width:'100%', 
+                                    marginBottom:'1px',
+                                    height:'15px', 
+                                    backgroundColor:'rgb(121, 134, 203)',
+                                    
+                                    borderRadius:'50px'                          
+                                }}
+                        onMouseDown={(e) => resizestart(e, index)} onMouseUp={eventend}></div>         
                     </div>
                     
                 ))}
