@@ -1,6 +1,5 @@
 'use client'
 import React, { forwardRef, useEffect, useRef, useState ,useImperativeHandle} from "react";
-import DetailTodoList from "./DetailTodoList";
 let isSizedrag = false;
 let isdrag = false;
 let pointerMoveEventListener = null; // 변수 추가
@@ -55,12 +54,18 @@ const Divlist = forwardRef((props,ref) => {
     const dragdivmove = (e) =>{
         const index = currentIndex.current;
         let cnt = Math.round(parseInt(currenttop.current - startY.current+ e.clientY)/25);
-        if (cnt < 2 || (currentleft.current - startX.current+ e.clientX) <15) return;
+        
+        let _left = 0;
+        let top = 0
+        if (cnt < 2 ) top = 50;
+        else top = cnt*25;
+        if((currentleft.current - startX.current+ e.clientX) <15) _left = 15;
+        else _left = currentleft.current - startX.current+ e.clientX
         ismove = true;
         let endcnt = Math.round((cnt*25 + parseInt(divContent.height)) /25)
         let NewdivContent = {
-            left: currentleft.current - startX.current+ e.clientX + "px",
-            top: cnt*25 + "px",
+            _left: _left + "px",
+            top: top + "px",
             width: divContent.width,
             height: divContent.height,
             start:getTime(cnt),
@@ -78,7 +83,7 @@ const Divlist = forwardRef((props,ref) => {
         if ( height <= 50 || parseInt(divContent.top)  + height > 1650 || parseInt(height) % 25 !== 0) return
         let cnt = Math.round( (parseInt(divContent.top) + height) / 25 );
         let NewdivContent = {
-            left: divContent.left,
+            _left: divContent._left,
             top: divContent.top,
             width: divContent.width,
             height:height + "px",
@@ -146,7 +151,7 @@ const Divlist = forwardRef((props,ref) => {
                 style={{
                     cursor: 'pointer',
                     position: 'absolute',
-                    left: divContent.left,
+                    left: divContent._left,
                     top: divContent.top,
                     width: divContent.width,
                     height: divContent.height,
