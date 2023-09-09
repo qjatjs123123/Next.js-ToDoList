@@ -2,27 +2,20 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import DetailTodoList from "./DetailTodoList";
+import Divlist from "./Divlist";
 let isSizedrag = false;
 let isdrag = false;
 let pointerMoveEventListener = null; // 변수 추가
 let ismove = false;
 export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
-    const divRefs = useRef([]);
-    //const [isdrag, setIsdrag] = useState(false);
-    //const [isSizedrag, setIsSizedrag] = useState(false);
+    const divRefs = useRef();
     const [show, setShow] = useState(false);
-    const startX = useRef(0);
-    const startY = useRef(0);
-    const currentIndex = useRef(0);
-    const startSizeY  = useRef(0);
-    const currentHeight = useRef(0);
     const scrollTop = useRef(0);
-    const currentscrollTop = useRef(0);
-    const currentleft = useRef(0);
-    const currenttop = useRef(0);
+
     let divlist = '';
     useEffect(() => {
+        
         divlist = document.getElementsByClassName('todolist')[0];
         function handleScroll() {
             scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
@@ -55,7 +48,7 @@ export default function TodoList(props) {
         for (let i = 8; i < 25; i++) {
             const tp = (i-8)*100 + 50;
             arr.push(
-                <hr onClick={() => alert("qw")} key={i} style={{position:'absolute', top:`${tp}px`, left:'0', margin:'0', borderTop: "1px solid black", width: '100%'}}>
+                <hr onMouseDown={() => { handleDivClick}} key={i} style={{position:'absolute', top:`${tp}px`, left:'0', margin:'0', borderTop: "1px solid black", width: '100%'}}>
                 </hr>
             )
         }
@@ -66,9 +59,11 @@ export default function TodoList(props) {
         if (isdrag || isSizedrag) return
         let left = e.nativeEvent.offsetX + 'px';  
         let cnt = Math.round((e.target.scrollTop + e.nativeEvent.offsetY) / 25 );
+        if(e.target.tagName === 'HR') cnt =  Math.round((e.target.scrollTop + parseInt(e.target.style.top) / 25));
+    
         let top = cnt*25 +'px';
         if (cnt < 2) return;
-        if(e.target.tagName === 'HR') top = e.target.scrollTop + parseInt(e.target.style.top) + 'px';
+        
         const newDiv = {
             left:  left,
             top:  cnt*25,
@@ -77,16 +72,9 @@ export default function TodoList(props) {
             start: getTime(cnt),
             end: getTime(cnt+4)
         };
-        divRefs.current.push(React.createRef());
         setDivs([...divs, newDiv]);
     }
-    const handleDivsClick = (e) => {
-        if(ismove){ ismove = false;return;}
-        setShow(true);
-        ismove = false;
-        
-        e.stopPropagation();
-    }
+    
     const getTime = (top) => {
         let hour = parseInt((top + 2) / 4) + 7;
         const minute = (top + 2) % 4; 
@@ -102,104 +90,9 @@ export default function TodoList(props) {
         return tmp;
         
     }
-    const eventstart = (e) => {
-        if (pointerMoveEventListener === null){
-            pointerMoveEventListener = pointermoveHandler;
-            document.getElementsByClassName('todolist')[0].addEventListener('pointermove', pointermoveHandler);
-        }
-        
-    }
-    const pointermoveHandler = (event) => {
-        const events = event.getCoalescedEvents();
-        for (let event of events) {
-            eventHandler(event);
-        }
-    }
-    const resizestart = (e, index) => {
-        eventstart(e);
-        //setIsSizedrag(true);
-        isSizedrag = true
-        currentIndex.current = index;
-        startSizeY.current = e.clientY;
-        currentHeight.current = divs[currentIndex.current].height;
-        currentscrollTop.current = scrollTop.current;
-        e.stopPropagation();
-        e.preventDefault();
-    }  
-    const resize = (e) => {
-        ismove = true;
-        const newDivs = [...divs];
-        const index = currentIndex.current;
-        const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
-                     + parseInt(currentHeight.current) - startSizeY.current + e.clientY
-        if ( height <= 50 || parseInt(newDivs[index].top)  + height > 1650 || parseInt(height) % 25 !== 0) return
-        let cnt = Math.round( (parseInt(newDivs[index].top) + height) / 25 );
-        newDivs[index] = {
-            left: newDivs[index].left,
-            top: newDivs[index].top,
-            width: newDivs[index].width,
-            height:height + "px",
-            start: newDivs[index].start,
-            end: getTime(cnt)
-        };
-        setDivs(newDivs);
-    }
-    const dragdivstart = (e,index) => {
-        isdrag = true;
-        currentIndex.current = index;
-        startX.current = e.clientX
-        startY.current = e.clientY
-        if (e.target.tagName === 'SPAN'){
-            currentleft.current = parseInt(e.target.parentElement.style.left);
-            currenttop.current = parseInt(e.target.parentElement.style.top);
-        }else{
-            currentleft.current = parseInt(e.target.style.left);
-            currenttop.current = parseInt(e.target.style.top);
-        }
-        eventstart(e);
-        e.preventDefault();
-        e.stopPropagation();
-        
-    }  
-    
-    const dragdivmove = (e) =>{
-        const newDivs = [...divs];
-        const index = currentIndex.current;
-        const divRef = divRefs.current[index];
-        let cnt = Math.round(parseInt(currenttop.current - startY.current+ e.clientY)/25);
-        if (cnt < 2 || (currentleft.current - startX.current+ e.clientX) <15) return;
-        ismove = true;
-        let endcnt = Math.round((cnt*25 + parseInt(newDivs[index].height)) /25)
-        newDivs[index] = {
-            left: currentleft.current - startX.current+ e.clientX + "px",
-            top: cnt*25 + "px",
-            width: newDivs[index].width,
-            height: newDivs[index].height,
-            start:getTime(cnt),
-            end:getTime(endcnt)
-          };
-          setDivs(newDivs);
 
-    }
-    const dragdivend = (e) =>{
-        setIsdrag(false);
-    }
-
-    const eventHandler = (e) => {
-        
-        if (isSizedrag) resize(e);
-        if (isdrag) dragdivmove(e);
-    }
-
-    const eventend = () =>{
-       isdrag = false;
-       isSizedrag=false;
-       document.getElementsByClassName('todolist')[0].removeEventListener('pointermove', pointerMoveEventListener);
-       pointerMoveEventListener=null;
-
-    }
     return (
-        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onMouseUp={eventend} >
+        <div className="todolist" style={{display:"flex", flexDirection:'row'}} onMouseUp={() => divRefs.current.willBeUsedInParentComponent()} >
             <div className="timelist">
                 {timeList()}
             </div>
@@ -208,48 +101,16 @@ export default function TodoList(props) {
             <div className="divlist"  onMouseDown={handleDivClick}>
                 {hrDraw()}    
                 {divs.map((div, index) => (
-                    <div>
-                        <div
-                            key={index}
-                            onMouseDown={(e) => {dragdivstart(e, index)}}
-                            onClick={handleDivsClick}
-                            className="a"
-                            onMouseUp={eventend}
-                            ref={divRefs.current[index]}
-                            style={{
-                                cursor:'pointer',
-                                position: 'absolute',
-                                left: div.left,
-                                top: div.top,
-                                width: div.width,
-                                height: div.height,
-                                backgroundColor: 'rgb(121, 134, 203)',
-                                borderRadius:'10px',
-                                border: '1px solid white',
-                                color:'white',
-                                display:'flex',
-                                flexDirection:"column"
-                            }}
-                        >   
-                        <span style={{marginLeft:'5px', fontSize:'13px', fontWeight:'bold'}}>(제목 없음)</span>
-                        <span style={{marginLeft:'5px', fontSize:'13px', fontWeight:'bold'}}>{div.start}~{div.end}</span>
-                        <div style={{ 
-                                        className:"b",
-                                        cursor:'s-resize', 
-                                        position:'absolute',
-                                        bottom: '0',
-                                        width:'100%', 
-                                        marginBottom:'1px',
-                                        height:'10px', 
-                                        backgroundColor:'rgb(121, 134, 203)',
-                                        borderRadius:'50px'                         
-                                    }}
-                            onMouseDown={(e) => resizestart(e, index)} onMouseUp={eventend}></div>         
-                        </div>
-                    </div>
+                    <Divlist 
+                        ref = {divRefs}
+                        key={index} 
+                        div ={div} 
+                        index={index} 
+                        setShow={setShow}
+                        />
                 ))}
             </div>
-            <DetailTodoList show={show} setShow={setShow}/>
+            <DetailTodoList setShow={setShow} show={show}/>
         </div>
         
         // <div className="todolist" onClick={handleDivClick} style={{ position: 'relative' }}>
