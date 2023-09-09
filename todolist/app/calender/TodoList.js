@@ -69,7 +69,7 @@ export default function TodoList(props) {
         let top = cnt * 25 + 'px';
         if (cnt < 2) return;
 
-        const newDiv = {
+        let newDiv = {
             _left: parseInt(_left),
             top: cnt * 25,
             width: 200,
@@ -82,7 +82,12 @@ export default function TodoList(props) {
 
         axios.post(url, data)
             .then((response) => {
-                setDivs([...divs, newDiv]);
+                
+                if (response.data){
+                    newDiv.divID = response.data.insertId;
+                    setDivs([...divs, newDiv]);
+                }
+                else alert("실패")
             })
             
         

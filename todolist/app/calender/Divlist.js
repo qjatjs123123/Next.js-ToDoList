@@ -1,4 +1,5 @@
 'use client'
+import axios from "axios";
 import React, { forwardRef, useEffect, useRef, useState ,useImperativeHandle} from "react";
 let isSizedrag = false;
 let isdrag = false;
@@ -64,12 +65,13 @@ const Divlist = forwardRef((props,ref) => {
         ismove = true;
         let endcnt = Math.round((cnt*25 + parseInt(divContent.height)) /25)
         let NewdivContent = {
-            _left: _left + "px",
-            top: top + "px",
+            _left: _left ,
+            top: top ,
             width: divContent.width,
             height: divContent.height,
             start:getTime(cnt),
-            end:getTime(endcnt)
+            end:getTime(endcnt),
+            divID : divContent.divID
           };
           setDivcontent(NewdivContent);
 
@@ -86,9 +88,10 @@ const Divlist = forwardRef((props,ref) => {
             _left: divContent._left,
             top: divContent.top,
             width: divContent.width,
-            height:height + "px",
+            height:height,
             start: divContent.start,
-            end: getTime(cnt)
+            end: getTime(cnt),
+            divID : divContent.divID
         };
         setDivcontent(NewdivContent);
     }
@@ -134,12 +137,24 @@ const Divlist = forwardRef((props,ref) => {
         ismove = false;   
         e.stopPropagation();
     }
+
+    const todolistUpdateSubmit = () => {
+        const url = '/api/todolist/update'
+        const data = divContent
+        axios.post(url, data)
+            .then((response) => {
+                console.log(response.data)
+            })
+    }
+
     const willBeUsedInParentComponent = () =>{
+        if (!isdrag && !isSizedrag) return;
+        todolistUpdateSubmit();
         isdrag = false;
         isSizedrag=false;
         document.getElementsByClassName('todolist')[0].removeEventListener('pointermove', pointerMoveEventListener);
         pointerMoveEventListener=null;
- 
+        
      }
     return (
         <div>
