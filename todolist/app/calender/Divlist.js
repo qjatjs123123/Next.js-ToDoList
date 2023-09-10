@@ -8,7 +8,6 @@ let pointerMoveEventListener = null; // 변수 추가
 let ismove = false;
 
 const Divlist = forwardRef((props,ref) => {
-    console.log(props.div)
     useImperativeHandle(ref, () => ({
         // 부모 컴포넌트에서 사용할 함수를 선언
         willBeUsedInParentComponent
@@ -74,10 +73,10 @@ const Divlist = forwardRef((props,ref) => {
             height: divContent.height,
             start:getTime(cnt),
             end:getTime(endcnt),
-            divID : divContent.divID
+            divID : divContent.divID,
+            date:divContent.Date
           };
           setDivcontent(NewdivContent);
-
     }
     const resize = (e) => {
         ismove = true;
@@ -94,7 +93,8 @@ const Divlist = forwardRef((props,ref) => {
             height:height,
             start: divContent.start,
             end: getTime(cnt),
-            divID : divContent.divID
+            divID : divContent.divID,
+            date:divContent.Date
         };
         setDivcontent(NewdivContent);
     }

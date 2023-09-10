@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import dynamic from "next/dynamic";
@@ -23,6 +23,14 @@ export default function DetailTodoList(props) {
     const end = useRef(props.divContent.end);
     const [updateFlg, setUpdateFlg] = useState(false);
     const day = useRef(props.divContent.Date)
+    console.log("qweqwe",props.divContent.Date,props.divContent);
+    useEffect(() => {
+        
+        const current_year = new Date(props.divContent.Date).getFullYear();
+        const current_month = new Date(props.divContent.Date).getMonth() + 1;
+        const current_day = new Date(props.divContent.Date).getDate();
+        day.current = `${current_year}년 ${current_month}월 ${current_day}일`
+    },[])
     const modules = useMemo(() => {
         return {
             toolbar: {
@@ -70,24 +78,31 @@ export default function DetailTodoList(props) {
 
         >
             <Modal.Header className='DetailmodalTitle' closeButton>
-                <Modal.Title id="example-custom-modal-styling-title">
+                <Modal.Title id="example-custom-modal-styling-title" style={{fontWeight:'bold'}}>
                     {
-                        !updateFlg ? <div><p>{title}</p><p>{day.current}{start.current}~{end.current}</p></div>:
+                        !updateFlg ? title:
                         <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={title}/>
                     }
 
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body className='DetailmodalBody' >
+            <Modal.Body className='DetailmodalBody' style={{fontSize:'14px', fontWeight:'normal'}}>
                 {!updateFlg ?
                     <div>
+                        <div>
+                            <span>{day.current} </span> 
+                            {start.current}~{end.current}
+                        </div>
+                        <hr/>
                         <div dangerouslySetInnerHTML={{ __html: html }}></div>
+                        <hr/>
                         <br/>
                         <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
                         <Button variant="dark" onClick={() => setUpdateFlg(true)} style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글수정</Button>
                         </div>   
                    :
                     <div>
+                        <div>{day.current}{start.current}~{end.current}</div>
                     <ReactQuill
                         modules={modules}
                         formats={formats}
