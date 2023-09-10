@@ -51,7 +51,6 @@ export default function TodoList(props) {
     }
 
     const handleDivClick = (e) => {
-        console.log("divclick")
         let _left = e.nativeEvent.offsetX + 'px';
         let cnt = Math.round((e.target.scrollTop + e.nativeEvent.offsetY) / 25);
         if (e.target.tagName === 'HR') cnt = Math.round((e.target.scrollTop + parseInt(e.target.style.top) / 25));
@@ -66,7 +65,7 @@ export default function TodoList(props) {
             height: 100,
             start: getTime(cnt),
             end: getTime(cnt + 4),
-            date : props.date
+            Date: props.date
         };
         const url = '/api/todolist/insert'
         const data = newDiv
@@ -76,10 +75,12 @@ export default function TodoList(props) {
                 
                 if (response.data){
                     newDiv.divID = response.data.insertId;
-                    newDiv.date = props.date;
+                    newDiv.divTitle="(제목 없음)";
+                    newDiv.divContent = "(내용 없음)";
                     setDivs([...divs, newDiv]);
                 }
-                else alert("실패")
+                
+                else alert("실패");
             })
             
         

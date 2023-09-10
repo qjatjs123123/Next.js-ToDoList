@@ -8,6 +8,7 @@ let pointerMoveEventListener = null; // 변수 추가
 let ismove = false;
 
 const Divlist = forwardRef((props,ref) => {
+    console.log(props.div)
     useImperativeHandle(ref, () => ({
         // 부모 컴포넌트에서 사용할 함수를 선언
         willBeUsedInParentComponent
@@ -65,18 +66,14 @@ const Divlist = forwardRef((props,ref) => {
         if((currentleft.current - startX.current+ e.clientX) <15) _left = 15;
         else _left = currentleft.current - startX.current+ e.clientX
         ismove = true;
-        let endcnt = Math.round((cnt*25 + parseInt(divContent.height)) /25)
-        let NewdivContent = {
-            _left: _left ,
-            top: top ,
-            width: divContent.width,
-            height: divContent.height,
-            start:getTime(cnt),
-            end:getTime(endcnt),
-            divID : divContent.divID,
-            date:divContent.Date
-          };
-          setDivcontent(NewdivContent);
+        let endcnt = Math.round((cnt*25 + parseInt(divContent.height)) /25);
+        let NewdivContent = JSON.parse(JSON.stringify(divContent));
+        NewdivContent._left = _left;
+        NewdivContent.top = top;
+        NewdivContent.start = getTime(cnt);
+        NewdivContent.end = getTime(endcnt);
+
+        setDivcontent(NewdivContent);
     }
     const resize = (e) => {
         ismove = true;
@@ -86,16 +83,21 @@ const Divlist = forwardRef((props,ref) => {
                      + parseInt(currentHeight.current) - startSizeY.current + e.clientY
         if ( height <= 50 || parseInt(divContent.top)  + height > 1650 || parseInt(height) % 25 !== 0) return
         let cnt = Math.round( (parseInt(divContent.top) + height) / 25 );
-        let NewdivContent = {
-            _left: divContent._left,
-            top: divContent.top,
-            width: divContent.width,
-            height:height,
-            start: divContent.start,
-            end: getTime(cnt),
-            divID : divContent.divID,
-            date:divContent.Date
-        };
+        let NewdivContent = JSON.parse(JSON.stringify(divContent));
+
+        NewdivContent.end = getTime(cnt);
+        NewdivContent.height = height;
+
+        // let NewdivContent = {
+        //     _left: divContent._left,
+        //     top: divContent.top,
+        //     width: divContent.width,
+        //     height:height,
+        //     start: divContent.start,
+        //     end: getTime(cnt),
+        //     divID : divContent.divID,
+        //     date:divContent.Date
+        // };
         setDivcontent(NewdivContent);
     }
     const getTime = (top) => {
@@ -146,7 +148,7 @@ const Divlist = forwardRef((props,ref) => {
         const data = divContent
         axios.post(url, data)
             .then((response) => {
-                console.log(response.data)
+
             })
     }
 

@@ -22,8 +22,8 @@ export default function DetailTodoList(props) {
     const start = useRef(props.divContent.start);
     const end = useRef(props.divContent.end);
     const [updateFlg, setUpdateFlg] = useState(false);
+    const [divContent, setDivcontent] = useState(props.divContent);
     const day = useRef(props.divContent.Date)
-    console.log("qweqwe",props.divContent.Date,props.divContent);
     useEffect(() => {
         
         const current_year = new Date(props.divContent.Date).getFullYear();
@@ -65,7 +65,7 @@ export default function DetailTodoList(props) {
 
         axios.post(url, data)
             .then((response) => {
-                console.log("Qwe");
+
             })
     }
 
@@ -80,8 +80,8 @@ export default function DetailTodoList(props) {
             <Modal.Header className='DetailmodalTitle' closeButton>
                 <Modal.Title id="example-custom-modal-styling-title" style={{fontWeight:'bold'}}>
                     {
-                        !updateFlg ? title:
-                        <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={title}/>
+                        !updateFlg ? divContent.divTitle:
+                        <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={divContent.divTitle}/>
                     }
 
                 </Modal.Title>
@@ -94,7 +94,7 @@ export default function DetailTodoList(props) {
                             {start.current}~{end.current}
                         </div>
                         <hr/>
-                        <div dangerouslySetInnerHTML={{ __html: html }}></div>
+                        <div dangerouslySetInnerHTML={{ __html: divContent.divContent }}></div>
                         <hr/>
                         <br/>
                         <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
@@ -102,16 +102,17 @@ export default function DetailTodoList(props) {
                         </div>   
                    :
                     <div>
-                        <div>{day.current}{start.current}~{end.current}</div>
+                        <div>{day.current} {start.current}~{end.current}</div>
+                        <hr/>
                     <ReactQuill
                         modules={modules}
                         formats={formats}
                         onChange={setHtml}
-                        value={html}
+                        value={divContent.divContent}
                         placeholder={'내용을 입력해주세요 '}
                         theme="snow"
                     />
-                    <br/>
+                    <br/><br/>
                     <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
                     <Button variant="dark" style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글저장</Button>
                     </div>

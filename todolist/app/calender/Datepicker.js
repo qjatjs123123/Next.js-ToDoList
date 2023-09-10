@@ -19,7 +19,7 @@ export default function Datepicker(props){
     },[current_year, current_month, current_day])
 
     const monthHandler = (diff) => {
-        console.log("As");
+
         const total = current_month + diff;
         if(total == 0){
             setYear(current_year - 1)
