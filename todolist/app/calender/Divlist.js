@@ -14,6 +14,7 @@ const Divlist = forwardRef((props,ref) => {
         willBeUsedInParentComponent
       }))
     const [show, setShow] = useState(false);
+    const [flg, setFlg] = useState(true);
     const index = props.index;
     const startX = useRef(0);
     const startY = useRef(0);
@@ -162,8 +163,9 @@ const Divlist = forwardRef((props,ref) => {
         
      }
     return (
+
         <div>
-            <DetailTodoList setShow={setShow} show={show} divContent={divContent}/>
+            <DetailTodoList setDivcontent={setDivcontent} setShow={setShow} show={show} divContent={divContent}/>
             <div
                 key={props.index}
                 onMouseDown={(e) => { dragdivstart(e, index) }}
@@ -186,7 +188,7 @@ const Divlist = forwardRef((props,ref) => {
 
                 }}
             >
-                <span style={{ marginLeft: '5px', fontSize: '13px', fontWeight: 'bold' }}>(제목 없음)</span>
+                <span style={{ marginLeft: '5px', fontSize: '13px', fontWeight: 'bold' }}>{divContent.divTitle}</span>
                 <span style={{ marginLeft: '5px', fontSize: '13px', fontWeight: 'bold' }}>{divContent.start}~{divContent.end}</span>
                 <div style={{
                     className: "b",

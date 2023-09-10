@@ -17,8 +17,8 @@ reiciendis porro quo magni incidunt dolore amet atque facilis ipsum
 deleniti rem!`
 
 export default function DetailTodoList(props) {
-    const [title, setTitle] = useState('title입니다.')
-    const [html, setHtml] = useState('data부분입니다.');
+    const [title, setTitle] = useState(props.divContent.divTitle)
+    const [html, setHtml] = useState(props.divContent.divContent);
     const start = useRef(props.divContent.start);
     const end = useRef(props.divContent.end);
     const [updateFlg, setUpdateFlg] = useState(false);
@@ -57,15 +57,27 @@ export default function DetailTodoList(props) {
         'image',
     ];
 
-    const positUpdateSubmit = () => {
-        const url = '/api/postit/write'
+    const todolistdetailUpdateSubmit = () => {
+        const url = '/api/todolistdetail/update'
         const data = {
-            content: html
+            divContent: html,
+            divTitle: title,
+            divID: props.divContent.divID
         }
 
         axios.post(url, data)
             .then((response) => {
-
+                if(response.data){
+                    props.setShow(false);
+                    setUpdateFlg(false);
+                    let NewdivContent = JSON.parse(JSON.stringify(props.divContent));
+                    NewdivContent.divContent = html;
+                    NewdivContent.divTitle = title;
+                    props.setDivcontent(NewdivContent);
+                }else{
+                    alert("실패");
+                }
+                
             })
     }
 
@@ -80,8 +92,8 @@ export default function DetailTodoList(props) {
             <Modal.Header className='DetailmodalTitle' closeButton>
                 <Modal.Title id="example-custom-modal-styling-title" style={{fontWeight:'bold'}}>
                     {
-                        !updateFlg ? divContent.divTitle:
-                        <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={divContent.divTitle}/>
+                        !updateFlg ? title:
+                        <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={title} onChange={(e) => setTitle(e.target.value)}/>
                     }
 
                 </Modal.Title>
@@ -94,7 +106,7 @@ export default function DetailTodoList(props) {
                             {start.current}~{end.current}
                         </div>
                         <hr/>
-                        <div dangerouslySetInnerHTML={{ __html: divContent.divContent }}></div>
+                        <div dangerouslySetInnerHTML={{ __html: html }}></div>
                         <hr/>
                         <br/>
                         <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
@@ -108,13 +120,13 @@ export default function DetailTodoList(props) {
                         modules={modules}
                         formats={formats}
                         onChange={setHtml}
-                        value={divContent.divContent}
+                        value={html}
                         placeholder={'내용을 입력해주세요 '}
                         theme="snow"
                     />
                     <br/><br/>
                     <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
-                    <Button variant="dark" style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글저장</Button>
+                    <Button onClick={todolistdetailUpdateSubmit} variant="dark" style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글저장</Button>
                     </div>
                 }
             </Modal.Body>
