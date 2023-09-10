@@ -17,7 +17,8 @@ export default function handler(req, res){
             console.log(err);
             if(err) res.send(false);
             else res.send(true);
+            conn.release();
         })
-        conn.release();
+        
     })
 }

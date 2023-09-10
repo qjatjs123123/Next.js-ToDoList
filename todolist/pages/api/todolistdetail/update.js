@@ -10,7 +10,8 @@ export default function handler(req, res){
         conn.query(sql, [divTitle, divContent, divID], (err, rows, fields)=>{
             if(err) res.send(false);
             else res.send(true);
+            conn.release();
         })
-        conn.release();
+        
     })
 }

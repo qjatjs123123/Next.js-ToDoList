@@ -1,24 +1,24 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import dynamic from "next/dynamic";
 import axios from 'axios';
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-const data = `Ipsum molestiae natus adipisci modi eligendi? Debitis amet quae unde
-commodi aspernatur enim, consectetur. Cumque deleniti temporibus
-ipsam atque a dolores quisquam quisquam adipisci possimus
-laboriosam. Quibusdam facilis doloribus debitis! Sit quasi quod
-accusamus eos quod. Ab quos consequuntur eaque quo rem! Mollitia
-reiciendis porro quo magni incidunt dolore amet atque facilis ipsum
-deleniti rem!`
+
 
 export default function PostIt(props) {
     const [show, setShow] = useState(false);
-    const [html, setHtml] = useState(data);
+    const [html, setHtml] = useState('');
     const [updateFlg, setUpdateFlg] = useState(false);
+    const isInsert = useRef(false);
+    const postitID = useRef('');
+    useEffect(() => {
+        setHtml('');
+        positSelectSubmit();
+    }, [props.date])
     const modules = useMemo(() => {
         return {
             toolbar: {
@@ -45,23 +45,61 @@ export default function PostIt(props) {
         'image',
     ];
 
-    const positUpdateSubmit = () => {
-        const url = '/api/postit/write'
+    const positSelectSubmit = () => {
+        const url = '/api/postit/select'
         const data ={
-            content : html
+            date : props.date
         }
 
         axios.post(url, data)
             .then((response) => {
-                console.log("Qwe");
+                if (response.data.length === 0){ isInsert.current = true;}
+                else{
+                    setHtml(response.data[0].content);
+                    isInsert.current = false;
+                    postitID.current = response.data[0].postitID;
+                }
+            })
+    }
+    const submitHandler = () =>{
+        if (isInsert.current) positWriteSubmit();
+        else positUpdateSubmit();
+    }
+    const positUpdateSubmit = () => {
+        const url = '/api/postit/update'
+        const data ={
+            content : html,
+            date : props.date,
+            postitID : postitID.current
+        }
+
+        axios.post(url, data)
+            .then((response) => {
+                if(!response.data) alert("실패")
+                setUpdateFlg(false)
+                setShow(false);
+            })
+    }
+    const positWriteSubmit = () => {
+        const url = '/api/postit/write'
+        const data ={
+            content : html,
+            date : props.date
+        }
+
+        axios.post(url, data)
+            .then((response) => {
+                if(!response.data) alert("실패")
+                setUpdateFlg(false)
+                setShow(false);
             })
     }
 
     return (
-        <div className="PostIt">
-            <div onClick={() => { setShow(true) }}>
+        <div className="PostIt" >
+            <div onClick={() => { setShow(true);}} style={{width:'100%', height:'100%'}}>
                 <div className="PostIt_title"></div>
-                {data}
+                <div dangerouslySetInnerHTML={{ __html: html }}></div>
             </div>
 
             <Modal
@@ -75,16 +113,15 @@ export default function PostIt(props) {
                     <Modal.Title  id="example-custom-modal-styling-title">
                         {
                             !updateFlg ? <Button variant="dark" onClick={() => setUpdateFlg(true)}>글수정</Button>
-                            : <Button variant="dark" onClick={positUpdateSubmit}>글저장</Button>
+                            : <Button variant="dark" onClick={submitHandler}>글저장</Button>
                         }
 
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className='modalBody'>
                     { !updateFlg ? 
-                    <p>
-                        {html}
-                    </p> :
+                    <div dangerouslySetInnerHTML={{ __html: html }}>           
+                    </div> :
                     <ReactQuill
                         modules={modules}
                         formats={formats}

@@ -8,8 +8,9 @@ export default function handler(req, res){
         conn.query(sql, ['qjatjs123123',Date,top,_left,width,height,start,end,0,'(제목 없음)','(내용 없음)'], (err, rows, fields)=>{
             if(err) res.send(false);
             else res.send(rows);
+            conn.release();
 
         })
-        conn.release();
+        
     })
 }

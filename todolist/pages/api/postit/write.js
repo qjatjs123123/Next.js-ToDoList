@@ -2,12 +2,14 @@
 const getConnection = require('@/db');
 
 export default function handler(req, res){
-    console.log(req.body);
-    const sql = "INSERT INTO postit (userID, date, content) VALUES (?,NOW(),?)";
+    console.log("QWe", req.body);
+    const sql = "INSERT INTO postit (userID, date, content) VALUES (?,?,?)";
     getConnection(async (conn) => {
-        conn.query(sql, ['qjatjs123123', req.body.content], (err, rows, fields)=>{
-            res.send(true)
+        conn.query(sql, ['qjatjs123123',req.body.date, req.body.content], (err, rows, fields)=>{
+            if(err) res.send(false);
+            else res.send(true)
+            conn.release();
         })
-        conn.release();
+        
     })
 }
