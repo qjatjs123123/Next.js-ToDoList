@@ -104,7 +104,8 @@ table{
     width:90%;
     height:95%;
     border-radius:10px;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x:hidden
     
 }
 .bordered-div {

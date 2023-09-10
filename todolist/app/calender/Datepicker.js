@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Td from "./Td";
 
 export default function Datepicker(props){
@@ -11,9 +11,15 @@ export default function Datepicker(props){
     const [current_year, setYear] = useState((new Date()).getFullYear());
     const [current_month, setMonth] = useState((new Date()).getMonth() + 1);
     const [current_day, setDay] = useState((new Date()).getDate());
-    // let current_month = (new Date()).getMonth() + 1;
     
+    // let current_month = (new Date()).getMonth() + 1;
+
+    useEffect(() => {
+        props.setDate(`${current_year}-${current_month}-${current_day}`);
+    },[current_year, current_month, current_day])
+
     const monthHandler = (diff) => {
+        console.log("As");
         const total = current_month + diff;
         if(total == 0){
             setYear(current_year - 1)

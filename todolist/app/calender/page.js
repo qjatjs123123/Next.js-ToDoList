@@ -1,8 +1,9 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Datepicker from "./Datepicker";
 import PostIt from "./PostIt";
 import TodoList from "./TodoList";
+import axios from "axios";
 
 export default function Calender(){
     const [date, setDate] = useState('');
@@ -16,13 +17,13 @@ export default function Calender(){
                 <div style={{width : '70%', display:'flex', flexDirection:'row',marginTop:'1rem'}}>
                     <p className="calender_font">Post It</p>  
                 </div>
-                <PostIt/>
+                <PostIt date={date}/>
             </div>
             <div  className="todoList_container">
             <div style={{width : '70%', display:'flex', flexDirection:'row',marginTop:'1rem'}}>
                     <p className="calender_font">TodoList</p>  
                 </div>
-                <TodoList/>
+                <TodoList date={date} />
             </div>
         </div>
     )

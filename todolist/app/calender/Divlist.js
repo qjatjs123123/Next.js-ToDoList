@@ -1,16 +1,19 @@
 'use client'
 import axios from "axios";
 import React, { forwardRef, useEffect, useRef, useState ,useImperativeHandle} from "react";
+import DetailTodoList from "./DetailTodoList";
 let isSizedrag = false;
 let isdrag = false;
 let pointerMoveEventListener = null; // 변수 추가
 let ismove = false;
 
 const Divlist = forwardRef((props,ref) => {
+    console.log(props.div)
     useImperativeHandle(ref, () => ({
         // 부모 컴포넌트에서 사용할 함수를 선언
         willBeUsedInParentComponent
       }))
+    const [show, setShow] = useState(false);
     const index = props.index;
     const startX = useRef(0);
     const startY = useRef(0);
@@ -133,7 +136,7 @@ const Divlist = forwardRef((props,ref) => {
             ismove = false;
             return;
         }
-        props.setShow(true);
+        setShow(true);
         ismove = false;   
         e.stopPropagation();
     }
@@ -158,6 +161,7 @@ const Divlist = forwardRef((props,ref) => {
      }
     return (
         <div>
+            <DetailTodoList setShow={setShow} show={show} divContent={divContent}/>
             <div
                 key={props.index}
                 onMouseDown={(e) => { dragdivstart(e, index) }}

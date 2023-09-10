@@ -6,36 +6,16 @@ import axios from "axios";
 
 
 export default function TodoList(props) {
-
     const [divs, setDivs] = useState([]);
     const divRefs = useRef();
     const [show, setShow] = useState(false);
     const scrollTop = useRef(0);
-
-
-    const todolistSelectSubmit = () => {
-        const url = '/api/todolist/select'
-        const data ={
-        } 
-
-        axios.post(url, data)
-            .then((response) => {
-                setDivs(response.data)
-            })
-    }
-
-    const todolistInsertSubmit = () => {
-        const url = '/api/todolist/select'
-        const data ={
-        } 
-
-        axios.post(url, data)
-            .then((response) => {
-                setDivs(response.data)
-            })
-    }
-
     let divlist = '';
+    useEffect(() => {
+        setDivs([]);
+        todolistSelectSubmit();
+    }, [props.date])
+
     useEffect(() => {
         todolistSelectSubmit();
         divlist = document.getElementsByClassName('todolist')[0];
@@ -48,6 +28,16 @@ export default function TodoList(props) {
             divlist.removeEventListener('scroll', handleScroll);
         };
     }, [])
+    const todolistSelectSubmit = () => {
+        const url = '/api/todolist/select'
+        const data ={
+            date:props.date
+        } 
+        axios.post(url, data)
+            .then((response) => {
+                setDivs(response.data)
+            })
+    }
     const hrDraw = () => {
         let arr = [];
         for (let i = 8; i < 25; i++) {
@@ -61,7 +51,7 @@ export default function TodoList(props) {
     }
 
     const handleDivClick = (e) => {
-
+        console.log("divclick")
         let _left = e.nativeEvent.offsetX + 'px';
         let cnt = Math.round((e.target.scrollTop + e.nativeEvent.offsetY) / 25);
         if (e.target.tagName === 'HR') cnt = Math.round((e.target.scrollTop + parseInt(e.target.style.top) / 25));
@@ -75,7 +65,8 @@ export default function TodoList(props) {
             width: 200,
             height: 100,
             start: getTime(cnt),
-            end: getTime(cnt + 4)
+            end: getTime(cnt + 4),
+            date : props.date
         };
         const url = '/api/todolist/insert'
         const data = newDiv
@@ -85,6 +76,7 @@ export default function TodoList(props) {
                 
                 if (response.data){
                     newDiv.divID = response.data.insertId;
+                    newDiv.date = props.date;
                     setDivs([...divs, newDiv]);
                 }
                 else alert("실패")
@@ -144,7 +136,7 @@ export default function TodoList(props) {
                         setShow={setShow}
                     />
                 ))}
-                <DetailTodoList setShow={setShow} show={show} />
+                
             </div>
         </div>
 

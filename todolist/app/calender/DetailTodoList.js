@@ -19,8 +19,10 @@ deleniti rem!`
 export default function DetailTodoList(props) {
     const [title, setTitle] = useState('title입니다.')
     const [html, setHtml] = useState('data부분입니다.');
+    const start = useRef(props.divContent.start);
+    const end = useRef(props.divContent.end);
     const [updateFlg, setUpdateFlg] = useState(false);
-
+    const day = useRef(props.divContent.Date)
     const modules = useMemo(() => {
         return {
             toolbar: {
@@ -70,7 +72,7 @@ export default function DetailTodoList(props) {
             <Modal.Header className='DetailmodalTitle' closeButton>
                 <Modal.Title id="example-custom-modal-styling-title">
                     {
-                        !updateFlg ? title:
+                        !updateFlg ? <div><p>{title}</p><p>{day.current}{start.current}~{end.current}</p></div>:
                         <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={title}/>
                     }
 

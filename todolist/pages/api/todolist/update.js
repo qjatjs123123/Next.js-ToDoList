@@ -18,6 +18,6 @@ export default function handler(req, res){
             if(err) res.send(false);
             else res.send(true);
         })
-
+        conn.release();
     })
 }
