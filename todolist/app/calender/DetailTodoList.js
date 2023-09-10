@@ -56,7 +56,24 @@ export default function DetailTodoList(props) {
         'align',
         'image',
     ];
+    const todolistdetailDeleteSubmit = () => {
+        const url = '/api/todolistdetail/delete'
+        const data = {
+            divID: props.divContent.divID
+        }
 
+        axios.post(url, data)
+            .then((response) => {
+                if(response.data){
+                    props.setShow(false);
+                    setUpdateFlg(false);
+                    props.setisDeleted(true);
+                    
+                }else{
+                    alert("실패");
+                }
+        })
+    }
     const todolistdetailUpdateSubmit = () => {
         const url = '/api/todolistdetail/update'
         const data = {
@@ -109,7 +126,7 @@ export default function DetailTodoList(props) {
                         <div dangerouslySetInnerHTML={{ __html: html }}></div>
                         <hr/>
                         <br/>
-                        <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
+                        <Button onClick={todolistdetailDeleteSubmit} variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
                         <Button variant="dark" onClick={() => setUpdateFlg(true)} style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글수정</Button>
                         </div>   
                    :
@@ -125,7 +142,7 @@ export default function DetailTodoList(props) {
                         theme="snow"
                     />
                     <br/><br/>
-                    <Button variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
+                    <Button onClick={todolistdetailDeleteSubmit} variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
                     <Button onClick={todolistdetailUpdateSubmit} variant="dark" style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글저장</Button>
                     </div>
                 }

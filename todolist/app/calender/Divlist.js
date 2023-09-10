@@ -14,6 +14,7 @@ const Divlist = forwardRef((props,ref) => {
         willBeUsedInParentComponent
       }))
     const [show, setShow] = useState(false);
+    const [isDeleted, setisDeleted] = useState(false);
     const [flg, setFlg] = useState(true);
     const index = props.index;
     const startX = useRef(0);
@@ -163,9 +164,15 @@ const Divlist = forwardRef((props,ref) => {
         
      }
     return (
-
+        isDeleted ? <div></div> :
         <div>
-            <DetailTodoList setDivcontent={setDivcontent} setShow={setShow} show={show} divContent={divContent}/>
+            <DetailTodoList 
+                setDivcontent={setDivcontent} 
+                setShow={setShow} 
+                show={show} 
+                divContent={divContent}
+                setisDeleted = {setisDeleted}
+                />
             <div
                 key={props.index}
                 onMouseDown={(e) => { dragdivstart(e, index) }}
