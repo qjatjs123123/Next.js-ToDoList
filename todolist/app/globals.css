@@ -105,8 +105,8 @@ table{
     height:95%;
     border-radius:10px;
     overflow-y: scroll;
-    overflow-x:hidden
-    
+    overflow-x:hidden;
+    position: relative;
 }
 .bordered-div {
     border-bottom: 1px solid #000; /* 아래쪽 테두리 스타일, 너비, 색상을 설정합니다. */
@@ -135,8 +135,30 @@ table{
     position:absolute;
     border-right: 1px solid gray;
     width:20px;
-    height:84%;
+    height:1650px;
     margin-Left:80px;
     
     z-index: 2;
+}
+.timerCircle{
+    background: red;
+    border-radius: 50%;
+    content: "";
+    position: absolute;
+    height: 12px;
+    margin-Left:93px;
+    width: 12px;
+    z-index: 5;
+    top: -50px;
+}
+.timerSquare{
+    background: red;
+    content: "";
+    position: absolute;
+    height: 1px;
+    margin-Left:93px;
+    width: 100%;
+    margin-top: 5px;
+    z-index: 5;
+    top: -50px;
 }

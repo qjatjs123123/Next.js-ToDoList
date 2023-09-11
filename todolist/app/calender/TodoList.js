@@ -10,6 +10,11 @@ export default function TodoList(props) {
     const divRefs = useRef();
     const [show, setShow] = useState(false);
     const scrollTop = useRef(0);
+    const timerId = useRef(null);
+    const timerIdSec = useRef(null);
+    const timerCircle = useRef(null);
+    const timerSquare = useRef(null);
+    const [gap, setGap] = useState(0)
     let divlist = '';
     useEffect(() => {
         setDivs([]);
@@ -22,10 +27,32 @@ export default function TodoList(props) {
         function handleScroll() {
             scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
         }
+        function moveTimer(){
+            const now = new Date();
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const second = now.getSeconds();	// 초
+
+            const gap = ((hour - 8) * 3600) + (minute*60) + second;
+            if (gap < 0){
+                timerCircle.current.style.top = `0px`;
+                timerSquare.current.style.top = `0px`;
+            }else{
+                const distance = (100 / 3600);
+                timerCircle.current.style.top = `${distance*gap+45}px`;
+                timerSquare.current.style.top = `${distance*gap+45}px`;
+            }
+        }
+        moveTimer();
         divlist.addEventListener('scroll', handleScroll);
+        timerIdSec.current = setInterval(() => {
+            moveTimer();
+    
+        }, 60000)
 
         return () => {
             divlist.removeEventListener('scroll', handleScroll);
+            clearInterval(timerIdSec.current);
         };
     }, [])
     const todolistSelectSubmit = () => {
@@ -136,9 +163,11 @@ export default function TodoList(props) {
                         index={index}
                         setShow={setShow}
                     />
-                ))}
-                
-            </div>
+                ))}        
+            </div> 
+
+            <div ref={timerCircle} className="timerCircle"></div>
+            <div ref={timerSquare} className="timerSquare"></div>
         </div>
 
         // <div className="todolist" onClick={handleDivClick} style={{ position: 'relative' }}>

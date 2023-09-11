@@ -118,7 +118,7 @@ export default function PostIt(props) {
 
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='modalBody'>
+                <Modal.Body className='modalBody' style={{height:'500px'}}>
                     { !updateFlg ? 
                     <div dangerouslySetInnerHTML={{ __html: html }}>           
                     </div> :
