@@ -18,7 +18,7 @@ export default function Timer(props) {
     }
     return (
         <div>
-            <Modal show={props.show} onHide={() => props.setShow(false)} style={{marginTop:'250px'}}>
+            <Modal show={props.show} onHide={() => props.setShow(false)} style={{marginTop:'200px'}}>
                 <Modal.Header style={{backgroundColor:'#EF6262', color:'white'}} closeButton>
                     <Modal.Title style={{color:'white'}} >알람</Modal.Title>
                 </Modal.Header>
