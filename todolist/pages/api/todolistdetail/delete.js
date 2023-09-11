@@ -2,7 +2,6 @@ const getConnection = require('@/db');
 
 export default function handler(req, res){
     const {divID} = req.body;
-    console.log("zz",divID);
     let sql = "UPDATE schedulediv SET ";
     sql += "isDeleted = 1 "
     sql += "where divID = ?"

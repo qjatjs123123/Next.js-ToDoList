@@ -8,7 +8,6 @@ let pointerMoveEventListener = null; // 변수 추가
 let ismove = false;
 
 const Divlist = forwardRef((props,ref) => {
-    console.log(props.div)
     useImperativeHandle(ref, () => ({
         // 부모 컴포넌트에서 사용할 함수를 선언
         willBeUsedInParentComponent
@@ -177,7 +176,7 @@ const Divlist = forwardRef((props,ref) => {
                 key={props.index}
                 onMouseDown={(e) => { dragdivstart(e, index) }}
                 onClick={handleDivsClick}
-                className="a"            
+                className="divlistitem"            
                 style={{
                     cursor: 'pointer',
                     position: 'absolute',

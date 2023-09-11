@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import DetailTodoList from "./DetailTodoList";
 import Divlist from "./Divlist";
 import axios from "axios";
+import Timer from "./Timer";
 
 
 export default function TodoList(props) {
@@ -15,6 +16,8 @@ export default function TodoList(props) {
     const timerCircle = useRef(null);
     const timerSquare = useRef(null);
     const [gap, setGap] = useState(0)
+    const TimeData = useRef('');
+    const TodoListData = useRef('')
     let divlist = '';
     useEffect(() => {
         setDivs([]);
@@ -34,21 +37,54 @@ export default function TodoList(props) {
             const second = now.getSeconds();	// 초
 
             const gap = ((hour - 8) * 3600) + (minute*60) + second;
+            
             if (gap < 0){
                 timerCircle.current.style.top = `0px`;
                 timerSquare.current.style.top = `0px`;
             }else{
                 const distance = (100 / 3600);
-                timerCircle.current.style.top = `${distance*gap+45}px`;
-                timerSquare.current.style.top = `${distance*gap+45}px`;
+                let total = distance*gap + 45;
+
+                if (minute%15 === 0) {
+                    total = Math.round(total);
+                }
+                timerCircle.current.style.top = `${total}px`;
+                timerSquare.current.style.top = `${total}px`;
+
+                if(minute%15 === 0 ){
+                    const divListElements = Array.from(document.getElementsByClassName("divlistitem"));
+                    let tmptodolist = '';
+                    for (let item of divListElements){
+                        const top = parseInt(item.style.top);
+                        if(total+5 === top){
+                            const text = item.querySelector("span").innerText;
+                            tmptodolist += text + ','
+                        }
+                    }
+                    tmptodolist = tmptodolist.slice(0,-1);
+                    if (hour < 11) TimeData.current = `오전 ${hour}시 ${minute}분`;
+                    else if(hour === 12) TimeData.current = `오후 ${12}시 ${minute}분`;
+                    else TimeData.current = `오후 ${hour - 12}시 ${minute}분`;
+                    TodoListData.current = tmptodolist;
+                    setShow(true);
+                }
             }
         }
+        
         moveTimer();
         divlist.addEventListener('scroll', handleScroll);
-        timerIdSec.current = setInterval(() => {
-            moveTimer();
-    
-        }, 60000)
+        timerId.current = setInterval(() => {
+            const now = new Date();
+            const second = now.getSeconds();
+            if (second === 0){
+                moveTimer();
+                timerIdSec.current = setInterval(() => {
+                    moveTimer();
+                }, 60000)
+                clearInterval(timerId.current);
+            }
+            
+        }, 1000);
 
         return () => {
             divlist.removeEventListener('scroll', handleScroll);
@@ -148,8 +184,10 @@ export default function TodoList(props) {
 
 
     return (
+        
         <div className="todolist" style={{ display: "flex", flexDirection: 'row' }} onMouseUp={() => divRefs.current.willBeUsedInParentComponent()} >
-            <div className="timelist">
+            
+            <div className="timelist" onClick={() => setShow(true)}>
                 {timeList()}
             </div>
             <div className="wall"></div>
@@ -161,13 +199,15 @@ export default function TodoList(props) {
                         key={index}
                         div={div}
                         index={index}
-                        setShow={setShow}
+                        /*setShow={setShow}*/
                     />
                 ))}        
             </div> 
 
             <div ref={timerCircle} className="timerCircle"></div>
             <div ref={timerSquare} className="timerSquare"></div>
+            <Timer setShow={setShow} show={show} TimeData={TimeData.current} TodoListData={TodoListData.current}/>
+
         </div>
 
         // <div className="todolist" onClick={handleDivClick} style={{ position: 'relative' }}>

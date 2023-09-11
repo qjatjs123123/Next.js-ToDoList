@@ -162,3 +162,15 @@ table{
     z-index: 5;
     top: -50px;
 }
+
+.vtimer{
+    animation: vibration .1s infinite;
+}
+@keyframes vibration {
+    from {
+      transform: rotate(4deg);
+    }
+    to {
+      transform: rotate(-4deg);
+    }
+  }
