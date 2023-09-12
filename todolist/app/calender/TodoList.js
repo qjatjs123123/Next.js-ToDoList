@@ -54,19 +54,21 @@ export default function TodoList(props) {
                 if(minute%15 === 0 ){
                     const divListElements = Array.from(document.getElementsByClassName("divlistitem"));
                     let tmptodolist = '';
+                    let flg = false;
                     for (let item of divListElements){
                         const top = parseInt(item.style.top);
                         if(total+5 === top){
                             const text = item.querySelector("span").innerText;
                             tmptodolist += text + ','
+                            flg = true
                         }
                     }
                     tmptodolist = tmptodolist.slice(0,-1);
-                    if (hour < 11) TimeData.current = `오전 ${hour}시 ${minute}분`;
+                    if (hour <= 11) TimeData.current = `오전 ${hour}시 ${minute}분`;
                     else if(hour === 12) TimeData.current = `오후 ${12}시 ${minute}분`;
                     else TimeData.current = `오후 ${hour - 12}시 ${minute}분`;
                     TodoListData.current = tmptodolist;
-                    setShow(true);
+                    if (flg) setShow(true);
                 }
             }
         }
@@ -91,6 +93,7 @@ export default function TodoList(props) {
             clearInterval(timerIdSec.current);
         };
     }, [])
+    
     const todolistSelectSubmit = () => {
         const url = '/api/todolist/select'
         const data ={
@@ -101,6 +104,7 @@ export default function TodoList(props) {
                 setDivs(response.data)
             })
     }
+
     const hrDraw = () => {
         let arr = [];
         for (let i = 8; i < 25; i++) {
@@ -115,8 +119,8 @@ export default function TodoList(props) {
 
     const handleDivClick = (e) => {
         let _left = e.nativeEvent.offsetX + 'px';
-        let cnt = Math.round((e.target.scrollTop + e.nativeEvent.offsetY) / 25);
-        if (e.target.tagName === 'HR') cnt = Math.round((e.target.scrollTop + parseInt(e.target.style.top) / 25));
+        let cnt = Math.round((e.nativeEvent.offsetY) / 25);
+        if (e.target.tagName === 'HR') cnt = Math.round((parseInt(e.target.style.top) / 25));
 
         let top = cnt * 25 + 'px';
         if (cnt < 2) return;
@@ -149,9 +153,9 @@ export default function TodoList(props) {
         
     }
 
-    const getTime = (top) => {
-        let hour = parseInt((top + 2) / 4) + 7;
-        const minute = (top + 2) % 4;
+    const getTime = (cnt) => {
+        let hour = parseInt((cnt - 2 ) / 4) + 8;
+        const minute = (cnt - 2) % 4;
         let tmp = '';
         if (hour < 12) tmp += "오전 ";
         else tmp += "오후 ";
@@ -187,7 +191,7 @@ export default function TodoList(props) {
         
         <div className="todolist" style={{ display: "flex", flexDirection: 'row' }} onMouseUp={() => divRefs.current.willBeUsedInParentComponent()} >
             
-            <div className="timelist" onClick={() => setShow(true)}>
+            <div className="timelist">
                 {timeList()}
             </div>
             <div className="wall"></div>

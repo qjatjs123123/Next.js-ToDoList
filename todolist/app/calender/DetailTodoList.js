@@ -24,13 +24,19 @@ export default function DetailTodoList(props) {
     const [updateFlg, setUpdateFlg] = useState(false);
     const [divContent, setDivcontent] = useState(props.divContent);
     const day = useRef(props.divContent.Date)
+    const [isVisible, setIsVisible] = useState(false);
+
     useEffect(() => {
-        
+        if (props.show) setIsVisible(true);
+        else setIsVisible(false);
+    },[props.show])
+    useEffect(() => {
+
         const current_year = new Date(props.divContent.Date).getFullYear();
         const current_month = new Date(props.divContent.Date).getMonth() + 1;
         const current_day = new Date(props.divContent.Date).getDate();
         day.current = `${current_year}년 ${current_month}월 ${current_day}일`
-    },[])
+    }, [])
     const modules = useMemo(() => {
         return {
             toolbar: {
@@ -64,15 +70,15 @@ export default function DetailTodoList(props) {
 
         axios.post(url, data)
             .then((response) => {
-                if(response.data){
+                if (response.data) {
                     props.setShow(false);
                     setUpdateFlg(false);
                     props.setisDeleted(true);
-                    
-                }else{
+
+                } else {
                     alert("실패");
                 }
-        })
+            })
     }
     const todolistdetailUpdateSubmit = () => {
         const url = '/api/todolistdetail/update'
@@ -84,70 +90,100 @@ export default function DetailTodoList(props) {
 
         axios.post(url, data)
             .then((response) => {
-                if(response.data){
+                if (response.data) {
                     props.setShow(false);
                     setUpdateFlg(false);
                     let NewdivContent = JSON.parse(JSON.stringify(props.divContent));
                     NewdivContent.divContent = html;
                     NewdivContent.divTitle = title;
                     props.setDivcontent(NewdivContent);
-                }else{
+                } else {
                     alert("실패");
                 }
-                
+
             })
+    }
+    const test = (e) =>{
+        e.stopPropagation();
     }
 
     return (
+        <div style={{width:'100%', height:'1000px', display : isVisible ? 'block' : 'none'}} onMouseDown={test}>
+        
         <Modal
             show={props.show}
-            onHide={() => { props.setShow(false); setUpdateFlg(false) }}
+            onHide={(e) => { props.setShow(false); setUpdateFlg(false);  }}
+            
             dialogClassName="modal-90w"
             aria-labelledby="example-custom-modal-styling-title"
 
         >
-            <Modal.Header className='DetailmodalTitle' closeButton>
-                <Modal.Title id="example-custom-modal-styling-title" style={{fontWeight:'bold'}}>
+            <Modal.Header onMouseDown={test} className='DetailmodalTitle' closeButton >
+                <Modal.Title id="example-custom-modal-styling-title" style={{ fontWeight: 'bold' }}>
                     {
-                        !updateFlg ? title:
-                        <Form.Control type="text" placeholder="제목 입력해주세요" style={{width:'200%'}} defaultValue={title} onChange={(e) => setTitle(e.target.value)}/>
+                        !updateFlg ? title :
+                            <Form.Control
+                                type="text"
+                                placeholder="제목 입력해주세요"
+                                style={{ width: '200%' }}
+                                defaultValue={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
                     }
 
                 </Modal.Title>
             </Modal.Header>
-            <Modal.Body className='DetailmodalBody' style={{fontSize:'14px', fontWeight:'normal'}}>
+            <Modal.Body onMouseDown={test} className='DetailmodalBody' style={{ fontSize: '14px', fontWeight: 'normal' }}>
                 {!updateFlg ?
                     <div>
                         <div>
-                            <span>{day.current} </span> 
+                            <span>{day.current} </span>
                             {start.current}~{end.current}
                         </div>
-                        <hr/>
+                        <hr />
                         <div dangerouslySetInnerHTML={{ __html: html }}></div>
-                        <hr/>
-                        <br/>
-                        <Button onClick={todolistdetailDeleteSubmit} variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
-                        <Button variant="dark" onClick={() => setUpdateFlg(true)} style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글수정</Button>
-                        </div>   
-                   :
+                        <hr />
+                        <br />
+                        <Button onClick={todolistdetailDeleteSubmit} 
+                                variant="danger" 
+                                style={{ bottom: '10px', position: 'absolute', right: "80px", marginRight: "10px" }}>
+                                글삭제
+                        </Button>{' '}
+                        <Button variant="dark" 
+                                onClick={() => setUpdateFlg(true)} 
+                                style={{ bottom: '10px', position: 'absolute', right: "0", marginRight: "10px" }}>
+                                글수정
+                        </Button>
+                    </div>
+                    :
                     <div>
                         <div>{day.current} {start.current}~{end.current}</div>
-                        <hr/>
-                    <ReactQuill
-                        modules={modules}
-                        formats={formats}
-                        onChange={setHtml}
-                        value={html}
-                        placeholder={'내용을 입력해주세요 '}
-                        theme="snow"
-                    />
-                    <br/><br/>
-                    <Button onClick={todolistdetailDeleteSubmit} variant="danger" style={{bottom:'10px',position:'absolute', right:"80px", marginRight:"10px"}}>글삭제</Button>{' '}
-                    <Button onClick={todolistdetailUpdateSubmit} variant="dark" style={{bottom:'10px',position:'absolute', right:"0", marginRight:"10px"}}>글저장</Button>
+                        <hr />
+                        <ReactQuill
+                            modules={modules}
+                            formats={formats}
+                            onChange={setHtml}
+                            value={html}
+                            placeholder={'내용을 입력해주세요 '}
+                            theme="snow"
+                        />
+                        <br /><br />
+                        <Button
+                            onClick={todolistdetailDeleteSubmit} 
+                            variant="danger" 
+                            style={{ bottom: '10px', position: 'absolute', right: "80px", marginRight: "10px" }}>
+                            글삭제
+                        </Button>{' '}
+                        <Button 
+                            onClick={todolistdetailUpdateSubmit}
+                            variant="dark" style={{ bottom: '10px', position: 'absolute', right: "0", marginRight: "10px" }}>
+                            글저장
+                        </Button>
                     </div>
                 }
             </Modal.Body>
         </Modal>
+        </div>
 
     )
 }

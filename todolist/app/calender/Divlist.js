@@ -45,12 +45,14 @@ const Divlist = forwardRef((props,ref) => {
         e.stopPropagation();
         
     }  
+
     const pointermoveHandler = (event) => {
         const events = event.getCoalescedEvents();
         for (let event of events) {
             eventHandler(event);
         }
     }
+    
     const eventHandler = (e) => {
         
         if (isSizedrag) resize(e);
@@ -80,27 +82,16 @@ const Divlist = forwardRef((props,ref) => {
         ismove = true;
         
         const index = currentIndex.current;
-        const height = parseInt(scrollTop.current) - parseInt(currentscrollTop.current)
-                     + parseInt(currentHeight.current) - startSizeY.current + e.clientY
+        const height = parseInt(currentHeight.current) - startSizeY.current + e.clientY
         if ( height <= 50 || parseInt(divContent.top)  + height > 1650 || parseInt(height) % 25 !== 0) return
         let cnt = Math.round( (parseInt(divContent.top) + height) / 25 );
         let NewdivContent = JSON.parse(JSON.stringify(divContent));
 
         NewdivContent.end = getTime(cnt);
         NewdivContent.height = height;
-
-        // let NewdivContent = {
-        //     _left: divContent._left,
-        //     top: divContent.top,
-        //     width: divContent.width,
-        //     height:height,
-        //     start: divContent.start,
-        //     end: getTime(cnt),
-        //     divID : divContent.divID,
-        //     date:divContent.Date
-        // };
         setDivcontent(NewdivContent);
     }
+
     const getTime = (top) => {
         let hour = parseInt((top + 2) / 4) + 7;
         const minute = (top + 2) % 4; 
@@ -123,10 +114,10 @@ const Divlist = forwardRef((props,ref) => {
         currentIndex.current = index;
         startSizeY.current = e.clientY;
         currentHeight.current = divContent.height;
-        currentscrollTop.current = scrollTop.current;
         e.stopPropagation();
         e.preventDefault();
     }  
+
     const eventstart = (e) => {
         if (pointerMoveEventListener === null){
             pointerMoveEventListener = pointermoveHandler;
@@ -134,6 +125,7 @@ const Divlist = forwardRef((props,ref) => {
         }
         
     }
+
     const handleDivsClick = (e) => {
         if(ismove){ 
             ismove = false;
@@ -162,6 +154,7 @@ const Divlist = forwardRef((props,ref) => {
         pointerMoveEventListener=null;
         
      }
+
     return (
         isDeleted ? <div></div> :
         <div>
