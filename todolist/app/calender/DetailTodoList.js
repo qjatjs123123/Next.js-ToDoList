@@ -112,11 +112,9 @@ export default function DetailTodoList(props) {
         
         <Modal
             show={props.show}
-            onHide={(e) => { props.setShow(false); setUpdateFlg(false);  }}
-            
+            onHide={(e) => { props.setShow(false); setUpdateFlg(false);  }}      
             dialogClassName="modal-90w"
             aria-labelledby="example-custom-modal-styling-title"
-
         >
             <Modal.Header onMouseDown={test} className='DetailmodalTitle' closeButton >
                 <Modal.Title id="example-custom-modal-styling-title" style={{ fontWeight: 'bold' }}>

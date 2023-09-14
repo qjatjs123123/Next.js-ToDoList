@@ -182,8 +182,8 @@ const Divlist = forwardRef((props,ref) => {
                     border: '1px solid white',
                     color: 'white',
                     display: 'flex',
-                    flexDirection: "column"
-                    
+                    flexDirection: "column",
+                    pointerEvents: props.index === -1 ? 'none' : null
 
                 }}
             >

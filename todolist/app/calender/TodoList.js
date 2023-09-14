@@ -4,6 +4,7 @@ import DetailTodoList from "./DetailTodoList";
 import Divlist from "./Divlist";
 import axios from "axios";
 import Timer from "./Timer";
+import ClickForm from "./ClickForm";
 
 
 export default function TodoList(props) {
@@ -18,6 +19,7 @@ export default function TodoList(props) {
     const [gap, setGap] = useState(0)
     const TimeData = useRef('');
     const TodoListData = useRef('')
+    const ClickRefs = useRef();
     let divlist = '';
     useEffect(() => {
         setDivs([]);
@@ -185,17 +187,41 @@ export default function TodoList(props) {
         return arr
     }
 
+    const test = (e) => {
+        let _left = e.nativeEvent.offsetX + 'px';
+        let cnt = Math.round((e.nativeEvent.offsetY) / 25);
+        if (e.target.tagName === 'HR') cnt = Math.round((parseInt(e.target.style.top) / 25));
 
+        let top = cnt * 25 + 'px';
+        if (cnt < 2) return;
+
+        let newDiv = {
+            _left: parseInt(_left),
+            top: cnt * 25,
+            width: 200,
+            height: 100,
+            start: getTime(cnt),
+            end: getTime(cnt + 4),
+            Date: props.date
+        };
+        newDiv.divTitle="(제목 없음)";
+        newDiv.divContent = "(내용 없음)";
+        ClickRefs.current.willBeUsedInParentComponent(newDiv);
+    }
 
     return (
         
-        <div className="todolist" style={{ display: "flex", flexDirection: 'row' }} onMouseUp={() => divRefs.current.willBeUsedInParentComponent()} >
-            
+        <div className="todolist"
+             style={{ display: "flex", flexDirection: 'row' }} 
+             onMouseUp={() => divs.length !== 0 ? divRefs.current.willBeUsedInParentComponent() : null} >
             <div className="timelist">
                 {timeList()}
             </div>
             <div className="wall"></div>
-            <div className="divlist" onMouseDown={handleDivClick}  >
+            <div className="divlist" onMouseDown={test}  >
+                <ClickForm ref={ClickRefs} divs={divs} setDivs={setDivs}/>
+                <div ref={timerCircle} className="timerCircle"></div>
+                <div ref={timerSquare} className="timerSquare"></div>
                 {hrDraw()}
                 {divs.map((div, index) => (
                     <Divlist
@@ -208,10 +234,9 @@ export default function TodoList(props) {
                 ))}        
             </div> 
 
-            <div ref={timerCircle} className="timerCircle"></div>
-            <div ref={timerSquare} className="timerSquare"></div>
+            
             <Timer setShow={setShow} show={show} TimeData={TimeData.current} TodoListData={TodoListData.current}/>
-
+            
         </div>
 
         // <div className="todolist" onClick={handleDivClick} style={{ position: 'relative' }}>
