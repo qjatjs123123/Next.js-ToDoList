@@ -22,6 +22,7 @@ export default function TodoList(props) {
     const ClickRefs = useRef();
     let divlist = '';
     useEffect(() => {
+        if(props.data === '') return;
         setDivs([]);
         todolistSelectSubmit();
     }, [props.date])
@@ -50,8 +51,8 @@ export default function TodoList(props) {
                 if (minute%15 === 0) {
                     total = Math.round(total);
                 }
-                timerCircle.current.style.top = `${total}px`;
-                timerSquare.current.style.top = `${total}px`;
+                if (timerCircle.current) timerCircle.current.style.top = `${total}px`;
+                if (timerSquare.current) timerSquare.current.style.top = `${total}px`;
 
                 if(minute%15 === 0 ){
                     const divListElements = Array.from(document.getElementsByClassName("divlistitem"));
