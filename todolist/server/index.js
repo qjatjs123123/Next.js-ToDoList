@@ -11,7 +11,7 @@ const passport = require('passport');
 
 app.use(bodyParser.json()); // 클라이언트가 보낸 json 형식의 문자열을 파싱하여 req.body에 저장한다.
 app.use(bodyParser.urlencoded({extended:true}));
-app.use(expressSession({secret:' mySecretKey', resave:false, saveUninitialized:false}));
+app.use(expressSession({secret:' mySecretKey', resave:false, saveUninitialized:false, cookie:{maxAge:3600000 }}));
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials:true
@@ -31,20 +31,20 @@ app.get('/', (req, res) => {
 
 app.post('/login', (req,res, next) => {
     passport.authenticate('local', (err, user, info) => {
-        console.log(user);
         if(err) throw err;
         if (!user) res.send(false);
         if(user){
             req.login(user, (err) => {
                 if(err) throw err;
                 res.send('User loggin in');
-                console.log(user);
+
             })
         }
     })(req, res, next);
 })
 
 app.get('/getUser', (req,res)=>{
+
     res.send(req.user);
 })
 app.post("/idcheck", (req, res) => {

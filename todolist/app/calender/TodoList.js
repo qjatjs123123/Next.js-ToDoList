@@ -5,12 +5,13 @@ import Divlist from "./Divlist";
 import axios from "axios";
 import Timer from "./Timer";
 import ClickForm from "./ClickForm";
-
+import { useRouter } from 'next/navigation';
 
 export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
     const divRefs = useRef();
     const [show, setShow] = useState(false);
+    const [userID, setuserID] = useState('');
     const scrollTop = useRef(0);
     const timerId = useRef(null);
     const timerIdSec = useRef(null);
@@ -20,15 +21,40 @@ export default function TodoList(props) {
     const TimeData = useRef('');
     const TodoListData = useRef('')
     const ClickRefs = useRef();
+    
+    let navigate = useRouter();
     let divlist = '';
-    useEffect(() => {
-        if(props.data === '') return;
-        setDivs([]);
-        todolistSelectSubmit();
-    }, [props.date])
 
     useEffect(() => {
+        if(props.data == '' || props.data == null || props.data == undefined) return;
+        
+        console.log(props.data);
+        setDivs([]);
         todolistSelectSubmit();
+        loginCheck();
+        
+    }, [props.date])
+    const loginCheck = () => {
+
+        const url = 'http://localhost:3001/getUser';
+        axios({
+            method:'get',
+            withCredentials: true,
+            url: url
+        }).then(res => {
+           if (res.data == ''){
+                alert("다시 로그인 해주세요");
+                navigate.push('/');
+                return;
+           }else{
+                setuserID(res.data.userID)
+                
+           }
+        })
+    }
+    useEffect(() => {
+        todolistSelectSubmit();
+        loginCheck();
         divlist = document.getElementsByClassName('todolist')[0];
         function handleScroll() {
             scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
@@ -40,7 +66,7 @@ export default function TodoList(props) {
             const second = now.getSeconds();	// 초
 
             const gap = ((hour - 8) * 3600) + (minute*60) + second;
-            
+            if(timerCircle.current == null || timerSquare.current == null) return
             if (gap < 0){
                 timerCircle.current.style.top = `0px`;
                 timerSquare.current.style.top = `0px`;
@@ -51,8 +77,9 @@ export default function TodoList(props) {
                 if (minute%15 === 0) {
                     total = Math.round(total);
                 }
-                if (timerCircle.current) timerCircle.current.style.top = `${total}px`;
-                if (timerSquare.current) timerSquare.current.style.top = `${total}px`;
+
+                if (timerCircle.current != null) timerCircle.current.style.top = `${total}px`;
+                if (timerSquare.current != null) timerSquare.current.style.top = `${total}px`;
 
                 if(minute%15 === 0 ){
                     const divListElements = Array.from(document.getElementsByClassName("divlistitem"));

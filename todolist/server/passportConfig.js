@@ -19,6 +19,7 @@ module.exports = function(passport){
                         if(row === true){console.log(rows); return done(null, rows[0]);}
                         else return done(null, false);
                     })
+                    conn.release();
                 })
             })
         })
@@ -29,7 +30,7 @@ module.exports = function(passport){
    })
 
    passport.deserializeUser((id, done) => {
-    console.log("desi")
+    
         const sql = "SELECT * FROM member WHERE userID = ?";
         getConnection((conn) => {
             conn.query(sql, [id], (err, result) => {
@@ -38,6 +39,7 @@ module.exports = function(passport){
                     userID : result[0].userID,
                     userName : result[0].userName
                 }
+                conn.release();
                 done(null, userInfo);
             })
         })

@@ -18,11 +18,11 @@ const ClickForm = forwardRef((props, ref) => {
     const textForm = useRef(null);
     useEffect(() => {
         if (show) {
-            console.log(titleForm.current.focus());
+
             titleForm.current.focus();
-            // setTimeout(() => {
-            //     titleForm.current.focus();
-            // }, 0);
+            setTimeout(() => {
+                titleForm.current.focus();
+            }, 0);
         }
     }, [show]);
     useImperativeHandle(ref, () => ({
@@ -46,8 +46,13 @@ const ClickForm = forwardRef((props, ref) => {
         };
     }, []);
 
+
+
+
+
+
     const handleDivClick = (e) => {
-        
+
         const url = '/api/todolist/insert'
         let newDiv = JSON.parse(JSON.stringify(divContent));
         newDiv.divTitle = title;

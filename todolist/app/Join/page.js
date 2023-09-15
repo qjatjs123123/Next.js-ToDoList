@@ -93,7 +93,6 @@ function Join() {
                 setFirstCheck(false);
             } else {
                 setFirstCheck(true);
-                console.log(firstcheck , secondcheck)
             }
             setFirst(e.target.value);
         } else {
