@@ -18,9 +18,11 @@ const ClickForm = forwardRef((props, ref) => {
     const textForm = useRef(null);
     useEffect(() => {
         if (show) {
-            setTimeout(() => {
-                titleForm.current.focus();
-            }, 0);
+            console.log(titleForm.current.focus());
+            titleForm.current.focus();
+            // setTimeout(() => {
+            //     titleForm.current.focus();
+            // }, 0);
         }
     }, [show]);
     useImperativeHandle(ref, () => ({
@@ -93,7 +95,9 @@ const ClickForm = forwardRef((props, ref) => {
     ];
     return (
         show ?
-            <div onMouseDown={(e) => { e.stopPropagation(); setShow(false) }} style={{ position: "absolute", width: '100%', height: '1660px', zIndex: '9999' }}>
+            <div 
+                onMouseDown={(e) => { e.stopPropagation(); setShow(false) }} 
+                style={{ position: "absolute", width: '100%', height: '1660px', zIndex: '9999' }}>
                 <Divlist
                     ref={null}
                     key={1}
