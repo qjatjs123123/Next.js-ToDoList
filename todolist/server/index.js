@@ -73,7 +73,23 @@ app.post("/join", (req, res) => {
             })
     })
 })
-
+app.post("/findId", (req, res) => {
+    const {userName, userNum} = req.body;  
+    getConnection((conn) => {
+        const sql = "SELECT * FROM member WHERE userName = ?";
+        let params = [userName];
+        conn.query(sql,params,
+            (err,rows,fields) => {
+                conn.release();
+                let flg = false;
+                rows.forEach((row) => {      
+                    if(bcrypt.compareSync(userNum,row.userNum)){res.send(row); flg=true;}
+                })
+                if (!flg) res.send([]);
+                
+            })
+    })
+})
 
 app.listen(3001, () => {
     console.log("3001 start");
