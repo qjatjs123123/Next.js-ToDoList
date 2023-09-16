@@ -27,7 +27,6 @@ export default function TodoList(props) {
 
     useEffect(() => {
         if (props.date == '' || props.userID == '') return;
-        console.log(props.date, props.userID)
         setDivs([]);
         todolistSelectSubmit();    
     }, [props.date,props.userID])

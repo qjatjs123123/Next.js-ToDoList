@@ -106,8 +106,26 @@ app.post("/sendEmail", (req, res) => {
 })
 
 
-app.get('/', (req, res) => {
-    res.send('heelo World');
+app.post('/changePw', (req, res) => {
+    const {userPw, userID, pwcurrent} = req.body;  
+    getConnection((conn) => {
+        let sql = "SELECT * FROM member WHERE userID = ?";
+        let params = [userID];
+        conn.query(sql, params, (err, rows) => {
+            console.log(rows);
+            if (err || !bcrypt.compareSync(pwcurrent, rows[0].userPassword)) {res.send(false);conn.release();}
+            else{
+                sql = "UPDATE member SET userPassword = ? WHERE userID = ?"
+                params = [encrypt(userPw), userID];
+                conn.query(sql, params, (err, rows) => {
+                    if (err) res.send(false)
+                    else res.send(true);
+                    conn.release();
+                })
+            }
+        })
+        
+    })
 })
 
 app.post('/login', (req,res, next) => {
@@ -129,8 +147,9 @@ app.get('/getUser', (req,res)=>{
 })
 
 app.get('/logout', (req, res) => {
+    console.log("logout")
     req.logout(function(err){
-        res.redirect('/');
+        res.send(true);
     }
     );
     

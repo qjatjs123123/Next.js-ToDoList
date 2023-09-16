@@ -30,6 +30,7 @@ function Main(props){
                     alert("로그인 실패");
                 else{
                     navigate.push('/calender');
+                    
                 }
             })
 
@@ -53,7 +54,7 @@ function Main(props){
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-                <Card style={{ width: '25rem', background:'lightgray'}}>
+                <Card style={{ width: '30rem', background:'lightgray'}}>
                     <Card.Body>
                         <Card.Title style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '30px'}}>게시판</Card.Title>
                         <div>
@@ -73,6 +74,7 @@ function Main(props){
                             <StyledNavLink href={"/Join"}>회원가입</StyledNavLink>
                             <StyledNavLink href={"/FindId"}>아이디찾기</StyledNavLink>
                             <StyledNavLink href={"/FindPw"}>비밀번호찾기</StyledNavLink>
+                            <StyledNavLink href={"/ChangePw"}>비밀번호변경</StyledNavLink>
                         </div>
                     </Card.Body>
                 </Card>

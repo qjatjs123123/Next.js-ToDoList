@@ -19,8 +19,8 @@ export default function Calender() {
                 url: url
             }).then(res => {
                 if (res.data == '') {
-                   // alert("다시 로그인 해주세요");
-                   // navigate.push('/');
+                   alert("다시 로그인 해주세요");
+                   navigate.push('/');
                     return;
                 } else {
                     setuserID(res.data.userID);
