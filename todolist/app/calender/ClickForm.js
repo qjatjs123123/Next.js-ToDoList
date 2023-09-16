@@ -46,11 +46,6 @@ const ClickForm = forwardRef((props, ref) => {
         };
     }, []);
 
-
-
-
-
-
     const handleDivClick = (e) => {
 
         const url = '/api/todolist/insert'

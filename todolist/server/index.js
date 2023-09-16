@@ -125,8 +125,15 @@ app.post('/login', (req,res, next) => {
 })
 
 app.get('/getUser', (req,res)=>{
-
     res.send(req.user);
+})
+
+app.get('/logout', (req, res) => {
+    req.logout(function(err){
+        res.redirect('/');
+    }
+    );
+    
 })
 app.post("/idcheck", (req, res) => {
     const {userId} = req.body;
