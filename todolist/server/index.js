@@ -51,21 +51,35 @@ async function sendMail(userName, email){
                 accessToken: accessToken
             }
         })
-        const randomBytes = crypto.randomBytes(20).toString('hex');
+        const randomBytes = crypto.randomBytes(8).toString('hex');
         const mailOptions = {
             from: '관리자 <qjatjs123123@gmail.com>',
             to: email,
             subject: "비밀번호 인증입니다.",
             text: '비밀번호 인증입니다.',
-            html: `<h1>비밀번호 인증입니다.<h1><br/><h3><a href=http://localhost:3000/changePw?token=${randomBytes}&userID=${userName}>비밀번호 변경하기</a><h3>`
+            html: `<h1>비밀번호 인증입니다.<h1><br/><h3>임시비밀번호 : ${randomBytes}<h3>`
         };
-        //await insertEmailCode(randomBytes,userName, email);
+        await ChangeTmpPassword(randomBytes,userName);
         const result = await transport.sendMail(mailOptions);
         return result;
     }catch(error){
         console.log(error);
         throw error;
     }
+}
+
+function ChangeTmpPassword(code, userID){
+    return new Promise((resolve, reject) => {
+        getConnection((conn) => {
+            const sql = "UPDATE member SET userPassword = ? WHERE userID = ?"
+            const params = [encrypt(code), userID]
+            conn.query(sql, params, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+                conn.release();
+            })
+        })
+    })
 }
 
 app.post("/sendEmail", (req, res) => {
@@ -104,7 +118,7 @@ app.post('/login', (req,res, next) => {
             req.login(user, (err) => {
                 if(err) throw err;
                 res.send('User loggin in');
-
+                
             })
         }
     })(req, res, next);

@@ -11,7 +11,7 @@ export default function TodoList(props) {
     const [divs, setDivs] = useState([]);
     const divRefs = useRef();
     const [show, setShow] = useState(false);
-    const [userID, setuserID] = useState('');
+    const [userID, setuserID] = useState(props.userID);
     const scrollTop = useRef(0);
     const timerId = useRef(null);
     const timerIdSec = useRef(null);
@@ -26,35 +26,13 @@ export default function TodoList(props) {
     let divlist = '';
 
     useEffect(() => {
-        if(props.data == '' || props.data == null || props.data == undefined) return;
-        
-        console.log(props.data);
+        if (props.date == '' || props.userID == '') return;
+        console.log(props.date, props.userID)
         setDivs([]);
-        todolistSelectSubmit();
-        loginCheck();
-        
-    }, [props.date])
-    const loginCheck = () => {
-
-        const url = 'http://localhost:3001/getUser';
-        axios({
-            method:'get',
-            withCredentials: true,
-            url: url
-        }).then(res => {
-           if (res.data == ''){
-                alert("다시 로그인 해주세요");
-                navigate.push('/');
-                return;
-           }else{
-                setuserID(res.data.userID)
-                
-           }
-        })
-    }
+        todolistSelectSubmit();    
+    }, [props.date,props.userID])
     useEffect(() => {
         todolistSelectSubmit();
-        loginCheck();
         divlist = document.getElementsByClassName('todolist')[0];
         function handleScroll() {
             scrollTop.current = document.getElementsByClassName('todolist')[0].scrollTop;
@@ -127,10 +105,12 @@ export default function TodoList(props) {
     const todolistSelectSubmit = () => {
         const url = '/api/todolist/select'
         const data ={
-            date:props.date
+            date:props.date,
+            userID: props.userID
         } 
         axios.post(url, data)
             .then((response) => {
+                console.log(props.date, props.userID, response.data);
                 setDivs(response.data)
             })
     }
@@ -162,7 +142,8 @@ export default function TodoList(props) {
             height: 100,
             start: getTime(cnt),
             end: getTime(cnt + 4),
-            Date: props.date
+            Date: props.date,
+            usersID : props.userID
         };
         const url = '/api/todolist/insert'
         const data = newDiv
@@ -247,7 +228,7 @@ export default function TodoList(props) {
             </div>
             <div className="wall"></div>
             <div className="divlist" onMouseDown={test}  >
-                <ClickForm ref={ClickRefs} divs={divs} setDivs={setDivs}/>
+                <ClickForm ref={ClickRefs} divs={divs} setDivs={setDivs} userID = {props.userID}/>
                 <div ref={timerCircle} className="timerCircle"></div>
                 <div ref={timerSquare} className="timerSquare"></div>
                 {hrDraw()}
@@ -257,6 +238,7 @@ export default function TodoList(props) {
                         key={index}
                         div={div}
                         index={index}
+                        userID = {props.userID}
                         /*setShow={setShow}*/
                     />
                 ))}        

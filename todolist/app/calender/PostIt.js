@@ -16,9 +16,10 @@ export default function PostIt(props) {
     const isInsert = useRef(false);
     const postitID = useRef('');
     useEffect(() => {
+        if (props.date == '' || props.userID == '') return;
         setHtml('');
         positSelectSubmit();
-    }, [props.date])
+    }, [props.date, props.userID])
     const modules = useMemo(() => {
         return {
             toolbar: {
@@ -48,7 +49,8 @@ export default function PostIt(props) {
     const positSelectSubmit = () => {
         const url = '/api/postit/select'
         const data ={
-            date : props.date
+            date : props.date,
+            userID : props.userID
         }
 
         axios.post(url, data)
@@ -70,7 +72,8 @@ export default function PostIt(props) {
         const data ={
             content : html,
             date : props.date,
-            postitID : postitID.current
+            postitID : postitID.current,
+            userID : props.userID
         }
 
         axios.post(url, data)
@@ -84,7 +87,8 @@ export default function PostIt(props) {
         const url = '/api/postit/write'
         const data ={
             content : html,
-            date : props.date
+            date : props.date,
+            userID : props.userID
         }
 
         axios.post(url, data)

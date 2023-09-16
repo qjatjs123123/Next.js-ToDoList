@@ -57,6 +57,7 @@ const ClickForm = forwardRef((props, ref) => {
         let newDiv = JSON.parse(JSON.stringify(divContent));
         newDiv.divTitle = title;
         newDiv.divContent = html;
+        newDiv.userID = props.userID
         const data = newDiv
         if(title === ''){
             setTimeout(() => {
