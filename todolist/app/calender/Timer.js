@@ -1,12 +1,16 @@
 'use client'
 import { useEffect, useState } from 'react';
+
+import dynamic from "next/dynamic";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+
 import Image from 'next/image';
 export default function Timer(props) {
-    const [audio] = useState(new Audio('/alarmsound.mp3'));
+    
     const [isplay, setIsPlay] = useState(true);
     useEffect(() => {
+        const audio = new Audio('/alarmsound.mp3');
         audio.loop = isplay;
         if(props.show) audio.play()
         else audio.pause();

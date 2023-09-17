@@ -1,9 +1,10 @@
 'use client'
 
 import Divlist from "./Divlist";
-import Form from 'react-bootstrap/Form';
+import dynamic from "next/dynamic";
 import Button from 'react-bootstrap/Button';
-import ReactQuill from "react-quill";
+import Form from 'react-bootstrap/Form';
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import axios from "axios";
 const { forwardRef, useImperativeHandle, useState, useRef, useEffect, useLayoutEffect, useMemo } = require("react")
 

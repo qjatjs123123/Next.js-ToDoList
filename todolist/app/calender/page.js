@@ -4,8 +4,9 @@ import Datepicker from "./Datepicker";
 import PostIt from "./PostIt";
 import TodoList from "./TodoList";
 import axios from "axios";
+import dynamic from "next/dynamic";
+const Button = dynamic(() => import("react-bootstrap/Button"), { ssr: false });
 import { useRouter } from 'next/navigation';
-import Button from 'react-bootstrap/Button';
 export default function Calender() {
     const [date, setDate] = useState('');
     const [userID, setuserID] = useState('')

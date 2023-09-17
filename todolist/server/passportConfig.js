@@ -16,7 +16,7 @@ module.exports = function(passport){
 
                     bcrypt.compare(userPassword, rows[0].userPassword, (err, row)=> {
                         if(err) throw err;
-                        if(row === true){console.log(rows); return done(null, rows[0]);}
+                        if(row === true){ return done(null, rows[0]);}
                         else return done(null, false);
                     })
                     conn.release();
@@ -25,12 +25,12 @@ module.exports = function(passport){
         })
    ) 
    passport.serializeUser((user, done) => {
-        console.log("sez")
+    console.log("serial")
         done(null, user.userID);
    })
 
    passport.deserializeUser((id, done) => {
-    
+    console.log("deserial")
         const sql = "SELECT * FROM member WHERE userID = ?";
         getConnection((conn) => {
             conn.query(sql, [id], (err, result) => {

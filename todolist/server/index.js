@@ -142,7 +142,9 @@ app.post('/login', (req,res, next) => {
     })(req, res, next);
 })
 
+
 app.get('/getUser', (req,res)=>{
+    console.log('getuser');
     res.send(req.user);
 })
 

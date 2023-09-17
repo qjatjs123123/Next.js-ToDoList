@@ -31,6 +31,7 @@ export default function TodoList(props) {
         todolistSelectSubmit();    
     }, [props.date,props.userID])
     useEffect(() => {
+        
         todolistSelectSubmit();
         divlist = document.getElementsByClassName('todolist')[0];
         function handleScroll() {
@@ -99,6 +100,7 @@ export default function TodoList(props) {
             divlist.removeEventListener('scroll', handleScroll);
             clearInterval(timerIdSec.current);
         };
+    
     }, [])
     
     const todolistSelectSubmit = () => {
