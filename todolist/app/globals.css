@@ -1,17 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Cute+Font&family=Noto+Sans+KR:wght@400;500;700&family=Overpass&family=Source+Code+Pro:wght@200;300;400;500&display=swap');
+*{
+  font-family: 'Noto Sans KR', sans-serif;
+}
 body,html{
     font-family: 'Questrial', sans-serif;
     margin:0 auto;
     height: 100%; /* 부모 요소(html 및 body)의 높이를 100%로 설정 */
     background:#f8e1ba;
 }
+.calendarContainer{
+    width: calc(100vw - 140px);
+    height: calc(100vh - 140px);
+    background-color: rgb(246, 251, 255);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.bodyContainer{
+    padding: 70px 70px 70px 70px;
+    background:white;
+}
+.MainContainer{
+    width: calc(100vw - 140px);
+    height: calc(100vh - 140px);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+.MainImgContainer{
+    width: 43%;
+    height: 100%;
+    background-color: beige;
+}
+.MainImgContainer img{
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+}
+.MainTxtContainer{
+    width: 57%;
+    height: 100%;
+    background-color: rgb(246, 251, 255);
+    position: relative;
+}
+.MainTxtInner {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 70%;
+
+
+    padding-left: 6.25rem;
+}
+
+.MainTxtInner h3:nth-child(1){
+    font-size: 4.1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 1.875rem;
+    color: rgb(51, 51, 51);
+}
+.MainTxtInner span{
+    display: inline-block;
+    width: 4.375rem;
+    height: 0.313rem;
+    background-color: rgb(51, 51, 51);
+    margin-bottom: 1.875rem;
+}
+.typing {
+    font-size: 2.2rem;
+    display: flex;
+  align-items: flex-end;
+}
+.text {
+    font-weight: bolder;
+    font-size: 2.2rem;
+    margin-left: .6rem;
+  }
+  
+.text::after {
+content: '';
+margin-left: .4rem;
+border-right: 2px solid #777;
+animation: cursor .9s infinite steps(2);
+}
+@keyframes cursor {
+    from { border-right: 2px solid #222; }
+    to { border-right: 2px solid #777; }
+}
+
+.MainGoButton{
+    width: 150px;
+    background-color: rgb(51, 51, 51);
+    border: 2px solid rgb(51, 51, 51);
+    padding: 1.75rem 2.375rem;
+    line-height: 0.375;
+    font-weight: 500;
+    color: white;
+    text-align: center;
+    margin-top: 2.188rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.MainGoButton:hover{
+    background: transparent;
+    color: rgb(51, 51, 51);
+}
+.headerContainer{
+    position: absolute;
+    width: 100%;
+    height: 70px;
+    padding-left: 70px;
+    padding-right: 70px;
+}
+.headerInner{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.headerInner h2{
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin: 0 0;
+    transform: translateY(-50%);
+    font-weight: bolder;
+}
+.iframeContainer{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin: 0 0;
+    transform: translateY(-50%);
+}
+.iframeContainer a{
+    text-decoration: none;
+    color: black
+}
+.iframeContainer a:nth-child(1){
+    margin-right: 10px;
+}
+.iframeContainer a i{
+    font-size: 2em;
+}
+
 .datepicker_container{
     display: flex;
     flex-direction: column;
     justify-content:center;
     align-items:center;
     text-align: center;
-    width:30%;
-    height: 100%;
+    width:25%;
+    height: 95%;
+    margin-right: 5%;
 }
 table{
     border-collapse: initial ;
@@ -26,6 +168,7 @@ table{
     width:70%;
     height: 40%;
     box-shadow:0px 40px 30px -20px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 -10px 20px rgba(0, 0, 0, 0.1), -10px 0 20px rgba(0, 0, 0, 0.1), 10px 0 20px rgba(0, 0, 0, 0.1);
 }
 .datepicker_table td, th{
     width: 40px;
@@ -58,7 +201,7 @@ table{
     width:70%;
     background-color: #FFFF99;
     border-radius: 10px;
-    box-shadow: 10px 10px 10px gray;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 -10px 20px rgba(0, 0, 0, 0.1), -10px 0 20px rgba(0, 0, 0, 0.1), 10px 0 20px rgba(0, 0, 0, 0.1);;
     border-bottom-right-radius: 80px;
     font-family: 'Questrial', sans-serif;
     font-weight: bold;
@@ -107,6 +250,7 @@ table{
     overflow-y: scroll;
     overflow-x:hidden;
     position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 -10px 20px rgba(0, 0, 0, 0.1), -10px 0 20px rgba(0, 0, 0, 0.1), 10px 0 20px rgba(0, 0, 0, 0.1);;
 }
 .bordered-div {
     border-bottom: 1px solid #000; /* 아래쪽 테두리 스타일, 너비, 색상을 설정합니다. */

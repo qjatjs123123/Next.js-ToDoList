@@ -109,11 +109,20 @@ export default function TodoList(props) {
             date:props.date,
             userID: props.userID
         } 
+        getLocalStorage(data);
+        return;
         axios.post(url, data)
             .then((response) => {
-                console.log(props.date, props.userID, response.data);
+                // console.log(props.date, props.userID, response.data);
                 setDivs(response.data)
             })
+    }
+
+    const getLocalStorage = (data) => {
+        const arr = JSON.parse(localStorage.getItem(data.date));
+        
+        if (arr === null) return;
+        setDivs(arr[0]);
     }
 
     const hrDraw = () => {
@@ -121,7 +130,7 @@ export default function TodoList(props) {
         for (let i = 8; i < 25; i++) {
             const tp = (i - 8) * 100 + 50;
             arr.push(
-                <hr onMouseDown={() => { handleDivClick }} key={i} style={{ position: 'absolute', top: `${tp}px`, left: '0', margin: '0', borderTop: "1px solid black", width: '100%' }}>
+                <hr onMouseDown={() => { test }} key={i} style={{ position: 'absolute', top: `${tp}px`, left: '0', margin: '0', borderTop: "1px solid black", width: '100%' }}>
                 </hr>
             )
         }
@@ -148,7 +157,8 @@ export default function TodoList(props) {
         };
         const url = '/api/todolist/insert'
         const data = newDiv
-
+        setLocalStorage(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 
@@ -164,7 +174,12 @@ export default function TodoList(props) {
             
         
     }
+    const setLocalStorage = (data) => {
+        if (!localStorage.getItem('divId')){
+            
+        }
 
+    }
     const getTime = (cnt) => {
         let hour = parseInt((cnt - 2 ) / 4) + 8;
         const minute = (cnt - 2) % 4;

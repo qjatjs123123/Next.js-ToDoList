@@ -48,7 +48,6 @@ const ClickForm = forwardRef((props, ref) => {
     }, []);
 
     const handleDivClick = (e) => {
-
         const url = '/api/todolist/insert'
         let newDiv = JSON.parse(JSON.stringify(divContent));
         newDiv.divTitle = title;
@@ -67,6 +66,8 @@ const ClickForm = forwardRef((props, ref) => {
             }, 0);
             return;
         }
+        setLocalStorage(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 
@@ -81,6 +82,29 @@ const ClickForm = forwardRef((props, ref) => {
         setHtml('');
         setShow(false);
     }
+
+    const setLocalStorage = (data) => {
+        let divID = localStorage.getItem("divID");
+        if (localStorage.getItem("divID") === null) {
+            localStorage.setItem("divID", 1);
+            divID = 1;
+        }
+        data.divID = divID;
+        let array;
+        if (localStorage.getItem(data.Date) === null) {
+            array = [[data], []];
+        } else{
+            array = JSON.parse(localStorage.getItem(data.Date));
+            array[0] = [...array[0], data];
+        }
+        localStorage.setItem(data.Date, JSON.stringify(array));
+        localStorage.setItem("divID", ++divID);
+        props.setDivs([...props.divs, data]);
+        setTitle('');
+        setHtml('');
+        setShow(false);
+    }
+
     const formats = [
         'header',
         'font',

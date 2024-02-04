@@ -25,9 +25,13 @@ const Divlist = forwardRef((props,ref) => {
     const currentscrollTop = useRef(0);
     const currentleft = useRef(0);
     const currenttop = useRef(0);
-    const [divContent, setDivcontent] = useState(props.div);
+    const [divContent, setDivcontent] = useState("");
     let divlist = '';
 
+    useEffect(() => {
+        setDivcontent(props.div);
+
+    }, [props.div])
     const dragdivstart = (e) => {
         isdrag = true;
         currentIndex.current = index;
@@ -138,11 +142,27 @@ const Divlist = forwardRef((props,ref) => {
 
     const todolistUpdateSubmit = () => {
         const url = '/api/todolist/update'
-        const data = divContent
+        const data = divContent;
+
+        getLocalStorage(data);
+        return;
         axios.post(url, data)
             .then((response) => {
 
             })
+    }
+
+    const getLocalStorage = (data) => {        
+        const arr = JSON.parse(localStorage.getItem(data.Date));
+        if (arr === null) return;
+        arr[0] = arr[0].map(item => {
+            if (item.divID === data.divID) return data;
+            else return item;
+        });
+
+        localStorage.setItem(data.Date, JSON.stringify(arr));
+
+
     }
 
     const willBeUsedInParentComponent = () =>{

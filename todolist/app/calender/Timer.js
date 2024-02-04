@@ -6,16 +6,22 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 import Image from 'next/image';
+import { useRef } from 'react';
+
 export default function Timer(props) {
     
     const [isplay, setIsPlay] = useState(true);
+
+    const [audio, setAudio] = useState(null);
     useEffect(() => {
-        const audio = new Audio('/alarmsound.mp3');
+        setAudio(new Audio('/alarmsound.mp3'));
+    }, [props.show])
+    useEffect(() => {
+        if (audio == null) return;
         audio.loop = isplay;
         if(props.show) audio.play()
         else audio.pause();
-
-    }, [props.show])
+    }, [audio])
     const close = () => {
         audio.pause();
         props.setShow(false)

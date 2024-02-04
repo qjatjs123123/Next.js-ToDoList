@@ -55,6 +55,9 @@ export default function PostIt(props) {
             userID : props.userID
         }
 
+        getLocalStorage(data);
+        return;
+
         axios.post(url, data)
             .then((response) => {
                 if (response.data.length === 0){ isInsert.current = true;}
@@ -65,6 +68,13 @@ export default function PostIt(props) {
                 }
             })
     }
+
+    const getLocalStorage = (data) => {
+        const arr = JSON.parse(localStorage.getItem(data.date));
+        if (arr === null ) return;
+        if (arr[1].length === 1) setHtml(arr[1][0]);
+    }
+
     const submitHandler = () =>{
         if (isInsert.current) positWriteSubmit();
         else positUpdateSubmit();
@@ -77,7 +87,8 @@ export default function PostIt(props) {
             postitID : postitID.current,
             userID : props.userID
         }
-
+        LocalStorageWrite(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 if(!response.data) alert("실패")
@@ -92,7 +103,8 @@ export default function PostIt(props) {
             date : props.date,
             userID : props.userID
         }
-
+        LocalStorageWrite(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 if(!response.data) alert("실패")
@@ -100,7 +112,18 @@ export default function PostIt(props) {
                 setShow(false);
             })
     }
-
+    const LocalStorageWrite = (data) => {
+        let array;
+        if (localStorage.getItem(data.date) === null) {
+            array = [[], [data.content]];
+        } else{
+            array = JSON.parse(localStorage.getItem(data.date));
+            array[1] = [data.content];
+        }
+        localStorage.setItem(data.date, JSON.stringify(array));
+        setUpdateFlg(false)
+        setShow(false);
+    }
     return (
         <div className="PostIt" >
             <div onClick={() => { setShow(true);}} style={{width:'100%', height:'100%'}}>

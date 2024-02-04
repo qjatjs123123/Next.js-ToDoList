@@ -17,8 +17,29 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"></link>
+      </head>
       <body>
-        {children}
+      <div className='headerContainer'>
+        <div className='headerInner'>
+          <h2>
+            BS's
+          </h2>
+          <div className='iframeContainer'>
+            <a href="https://github.com/qjatjs123123/Next.js-ToDoList">
+              <i class="fa fa-github"></i>
+            </a>
+            <a href="https://velog.io/@qjatjs123123/series/Next.js">
+              <i class="fa fa-vimeo"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+        <div className='bodyContainer'>
+          {children}
+        </div>
+        {/* {children} */}
       </body>
     </html>
   )

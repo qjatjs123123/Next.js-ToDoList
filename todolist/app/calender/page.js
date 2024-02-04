@@ -5,11 +5,13 @@ import PostIt from "./PostIt";
 import TodoList from "./TodoList";
 import axios from "axios";
 import dynamic from "next/dynamic";
+import "../globals.css";
+
 const Button = dynamic(() => import("react-bootstrap/Button"), { ssr: false });
 import { useRouter } from 'next/navigation';
 export default function Calender() {
     const [date, setDate] = useState('');
-    const [userID, setuserID] = useState('')
+    const [userID, setuserID] = useState("test")
     let navigate = useRouter();
     const loginCheck = () => {
         return new Promise((reject, resolve) => {
@@ -42,10 +44,9 @@ export default function Calender() {
     }
     useEffect(() => {
         if (date == '' || date == null || date == undefined) return;
-        loginCheck();
     }, [date])
     return (
-        <div style={{ position:'relative', height: '100%', width: '100%', display: 'flex', flexDirection: 'row' }}>
+        <div className="calendarContainer">
             <div className="datepicker_container">
                 <div style={{ width: '70%', display: 'flex', flexDirection: 'row', marginTop: '1rem' }}>
                     <p className="calender_font">Calender</p>
@@ -62,12 +63,12 @@ export default function Calender() {
                 </div>
                 <TodoList userID={userID} date={date} />
             </div>
-            <Button 
+            {/* <Button 
                 onClick={logout}
                 variant="danger" 
                 style={{position:'absolute', right:'125px', top:'15px'}}>
                     로그아웃
-            </Button>{' '}
+            </Button>{' '} */}
         </div>
     )
 }

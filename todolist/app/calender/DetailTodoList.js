@@ -19,6 +19,15 @@ export default function DetailTodoList(props) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
+        setTitle(props.divContent.divTitle);
+        setHtml(props.divContent.divContent);
+        start.current = props.divContent.start;
+        end.current = props.divContent.end;
+        setDivcontent(props.divContent);
+        day.current = props.divContent.Date;
+    }, [props.divContent.divTitle, props.divContent.divContent, props.divContent.start, props.divContent.end])
+
+    useEffect(() => {
         if (props.show) setIsVisible(true);
         else setIsVisible(false);
     },[props.show])
@@ -59,7 +68,8 @@ export default function DetailTodoList(props) {
         const data = {
             divID: props.divContent.divID
         }
-
+        LocalStorageDelete(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 if (response.data) {
@@ -72,6 +82,42 @@ export default function DetailTodoList(props) {
                 }
             })
     }
+
+    const LocalStorageDelete = (data) => {
+        const arr = JSON.parse(localStorage.getItem(props.divContent.Date));
+        console.log(arr[0].length);
+        if (arr === null) return;
+        arr[0] = arr[0].filter(item => {
+            if (item.divID !== data.divID) return item;
+        });
+
+        localStorage.setItem(props.divContent.Date, JSON.stringify(arr));
+        props.setShow(false);
+        setUpdateFlg(false);
+        props.setisDeleted(true);
+    }
+
+    const LocalStorageUpdate = (data) => {
+        const arr = JSON.parse(localStorage.getItem(props.divContent.Date));
+        if (arr === null) return;
+        arr[0] = arr[0].map(item => {
+            if (item.divID === data.divID) {
+                item.divContent = html;
+                item.divTitle = title;
+                
+            };
+            return item;
+        });
+
+        localStorage.setItem(props.divContent.Date, JSON.stringify(arr));
+        props.setShow(false);
+        setUpdateFlg(false);
+        let NewdivContent = JSON.parse(JSON.stringify(props.divContent));
+        NewdivContent.divContent = html;
+        NewdivContent.divTitle = title;
+        props.setDivcontent(NewdivContent);
+    }
+
     const todolistdetailUpdateSubmit = () => {
         const url = '/api/todolistdetail/update'
         const data = {
@@ -79,7 +125,8 @@ export default function DetailTodoList(props) {
             divTitle: title,
             divID: props.divContent.divID
         }
-
+        LocalStorageUpdate(data);
+        return;
         axios.post(url, data)
             .then((response) => {
                 if (response.data) {
