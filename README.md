@@ -2,6 +2,9 @@
 ## 💡 패키지 구조
 <img width="650" alt="image" src="https://github.com/qjatjs123123/React-Node-BBS/assets/74814641/82e897da-6d5e-4377-b34c-87f42c9df835">
 
+## 💡 프로젝트 데모 URL(배포 -> 백엔드x)
+https://radiant-semifreddo-4d46c7.netlify.app/
+
 ## 💡 프로젝트 소개
 Next.js를 학습하기 위한 프로젝트입니다.
 Google Calender를 모티브로 만든 ToDoList입니다.
