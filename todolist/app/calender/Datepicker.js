@@ -10,16 +10,19 @@ export default function Datepicker(props){
     const [today_month, settoday_month] = useState();
     const [today_day, settoday_day] = useState();
 
-    const [current_year, setYear] = useState((new Date()).getFullYear());
-    const [current_month, setMonth] = useState((new Date()).getMonth() + 1);
-    const [current_day, setDay] = useState((new Date()).getDate());
+    const [current_year, setYear] = useState();
+    const [current_month, setMonth] = useState();
+    const [current_day, setDay] = useState();
     
     // let current_month = (new Date()).getMonth() + 1;
     useEffect(() => {
         settoday_year((new Date()).getFullYear());
         settoday_month((new Date()).getMonth() + 1);
         settoday_day((new Date()).getDate());
-        console.log((new Date()).getFullYear(), (new Date()).getMonth() + 1, (new Date()).getDate());
+        
+        setYear((new Date()).getFullYear())
+        setMonth((new Date()).getMonth() + 1);
+        setDay((new Date()).getDate());
     }, [])
     useEffect(() => {
         props.setDate(`${current_year}-${current_month}-${current_day}`);
