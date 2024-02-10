@@ -19,7 +19,7 @@ export default function Datepicker(props){
         settoday_year((new Date()).getFullYear());
         settoday_month((new Date()).getMonth() + 1);
         settoday_day((new Date()).getDate());
-        console.log(today_year, today_month, today_day);
+        console.log((new Date()).getFullYear(), (new Date()).getMonth() + 1, (new Date()).getDate());
     }, [])
     useEffect(() => {
         props.setDate(`${current_year}-${current_month}-${current_day}`);
@@ -98,8 +98,8 @@ export default function Datepicker(props){
                                 {week_arr.map((day, i) => {
                                     let className = null;
                                     if (day !== '') {
-                                        if (today_year === current_year && today_month === current_month && today_day == day) className = 'today';
-                                        else if (current_day == day) className = 'selectToday';
+                                        if (today_year === current_year && today_month === current_month && today_day === Number(day)) className = 'today';
+                                        else if (current_day === Number(day)) className = 'selectToday';
                                         else  className = 'tbody_Day_td';
                                     }else className = null;
                                     return (<td key={i} onClick = {() => {setDay(Number(day))}} className = {className}> 
