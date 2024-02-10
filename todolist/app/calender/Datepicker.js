@@ -68,6 +68,7 @@ export default function Datepicker(props){
         for(let i = 0; i < (arr_calendar.length / 7); i++){
             new_calendar.push(arr_calendar.slice(i*7, i*7+7));
         }
+        console.log(new_calendar);
         return new_calendar;
     }  
     
