@@ -68,7 +68,7 @@ export default function Datepicker(props){
         for(let i = 0; i < (arr_calendar.length / 7); i++){
             new_calendar.push(arr_calendar.slice(i*7, i*7+7));
         }
-        console.log(new_calendar);
+
         return new_calendar;
     }  
     
@@ -100,7 +100,7 @@ export default function Datepicker(props){
                                     let className = null;
                                     if (day !== '') {
                                         if (today_year === current_year && today_month === current_month && today_day === Number(day)) className = 'today';
-                                        else if (current_day === Number(day)) className = 'selectToday';
+                                        else if (current_day === Number(day)) {className = 'selectToday'; console.log(current_day, Number(day));}
                                         else  className = 'tbody_Day_td';
                                     }else className = null;
                                     return (<td key={i} onClick = {() => {setDay(Number(day))}} className = {className}> 
